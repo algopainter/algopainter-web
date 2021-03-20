@@ -51,7 +51,11 @@ export default class AlgoPainterGweiItemProxy {
       return {
         status: 200,
         code: "SUCCESS",
-        response: response,
+        response: {
+          ...response,
+          owner: account,
+          tokenId: tokenIndex
+        },
       };
     } catch (error) {
       return {
@@ -74,7 +78,11 @@ export default class AlgoPainterGweiItemProxy {
       return {
         status: 200,
         code: "SUCCESS",
-        response: response,
+        response: {
+          ...response,
+          owner: await this.algoPainter.methods.ownerOf(index).call(),
+          tokenId: index,
+        },
       };
     } catch (error) {
       return {

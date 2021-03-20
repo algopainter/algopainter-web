@@ -2,13 +2,14 @@
   <div>
     <v-card color="grey lighten-4" flat>
       <v-toolbar class="elevation-0">
-        <v-toolbar-title>Paintings</v-toolbar-title>
+        <v-toolbar-title>My Paintings</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn color="success" class="mr-4" outlined to="/my-paintings">
-          My Paintings
+        <v-btn color="grey" class="mr-4" outlined to="/">
+          <v-icon left>mdi-view-module</v-icon>
+          Back to Gallery
         </v-btn>
 
-        <v-btn color="success" class="mr-4" @click="goToNewPainting()">
+        <v-btn color="primary" class="mr-4" @click="goToNewPainting()">
           New Painting
           <v-icon right>mdi-file-star-outline</v-icon>
         </v-btn>
@@ -49,15 +50,7 @@
           :key="painting.response.name"
           v-for="painting in myPaintings"
         >
-          <v-card class="mx-auto" min-height="520">
-            <v-card-title>{{ painting.response.name }}</v-card-title>
-
-            <v-img height="354" :src="painting.response.image"></v-img>
-
-            <v-card-text>
-              {{ painting.response.description }}
-            </v-card-text>
-          </v-card>
+          <painting-card :key="painting.response.tokenId" :painting="painting" />
         </v-col>
       </v-row>
       <v-row dense v-else>
@@ -91,14 +84,12 @@
 </template>
 
 <script>
-import AlgoPainterGweiItemProxy from "@/lib/eth/AlgoPainterGweiItemProxy";
-import RoboHashAddress from "@/lib/components/ui/RoboHashAddress.vue";
-import TransactionLink from "@/lib/components/ui/TransactionLink.vue";
+import AlgoPainterGweiItemProxy from '@/lib/eth/AlgoPainterGweiItemProxy';
+import PaintingCard from '@/lib/components/ui/PaintingCard';
 
 export default {
   components: {
-    RoboHashAddress,
-    TransactionLink,
+    PaintingCard,
   },
 
   data() {

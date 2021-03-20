@@ -34,6 +34,12 @@ export const routes = [
             /* webpackChunkName: "NewPainting" */ "@/pages/NewPainting.vue"
           ),
       },
+      {
+        path: "/paintings/:tokenId",
+        name: "/",
+        component: () =>
+          import(/* webpackChunkName: "Painting" */ "@/pages/Painting.vue"),
+      },
     ],
   },
 ];

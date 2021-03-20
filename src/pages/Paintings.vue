@@ -2,13 +2,13 @@
   <div>
     <v-card color="grey lighten-4" flat>
       <v-toolbar class="elevation-0">
-        <v-toolbar-title>Paintings</v-toolbar-title>
+        <v-toolbar-title>Gallery</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn color="success" class="mr-4" outlined to="/my-paintings">
+        <v-btn color="grey" class="mr-4" outlined to="/my-paintings">
           My Paintings
         </v-btn>
 
-        <v-btn color="success" class="mr-4" @click="goToNewPainting()">
+        <v-btn color="primary" class="mr-4" @click="goToNewPainting()">
           New Painting
           <v-icon right>mdi-file-star-outline</v-icon>
         </v-btn>
@@ -42,22 +42,14 @@
       </v-row>
     </v-container>
     <v-container fluid v-else>
-      <v-row dense v-if="myPaintings.length">
+      <v-row dense v-if="paintings.length">
         <v-col
           cols="12"
           md="3"
-          :key="painting.response.name"
-          v-for="painting in myPaintings"
+          :key="painting.response.tokenId"
+          v-for="painting in paintings"
         >
-          <v-card class="mx-auto" min-height="520">
-            <v-card-title>{{ painting.response.name }}</v-card-title>
-
-            <v-img height="354" :src="painting.response.image"></v-img>
-
-            <v-card-text>
-              {{ painting.response.description }}
-            </v-card-text>
-          </v-card>
+          <painting-card :key="painting.response.tokenId" :painting="painting" />
         </v-col>
       </v-row>
       <v-row dense v-else>
@@ -91,14 +83,12 @@
 </template>
 
 <script>
-import AlgoPainterGweiItemProxy from "@/lib/eth/AlgoPainterGweiItemProxy";
-import RoboHashAddress from "@/lib/components/ui/RoboHashAddress.vue";
-import TransactionLink from "@/lib/components/ui/TransactionLink.vue";
+import AlgoPainterGweiItemProxy from '@/lib/eth/AlgoPainterGweiItemProxy';
+import PaintingCard from '@/lib/components/ui/PaintingCard';
 
 export default {
   components: {
-    RoboHashAddress,
-    TransactionLink,
+    PaintingCard,
   },
 
   data() {
@@ -106,7 +96,7 @@ export default {
       page: 1,
       pageCount: 0,
       pageSize: 8,
-      myPaintings: [],
+      paintings: [],
       loading: true,
     };
   },
@@ -171,31 +161,9 @@ export default {
       this.page = page || this.page;
       this.pageCount = Math.ceil(count / this.pageSize);
 
-      const myPaintings = await apProxy.getPaintings(this.pageSize, this.page - 1);
+      const paintings = await apProxy.getPaintings(this.pageSize, this.page - 1);
 
-      this.myPaintings = myPaintings.filter((painting) => painting.status === 200);
-    },
-
-    subscribeToEvents() {
-      // if (!this.isConnected) {
-      //   return;
-      // }
-      // const proxy = new AlgoPainterGweiItemProxy();
-      // const events = proxy.events();
-      // events.NewPaint({fromBlock: 0})
-      // .on('connected', function(subscriptionId){
-      //    console.log({subscriptionId});
-      // })
-      // .on('data', (event) => {
-      //   console.log('data', event);
-      //   this.loadPaintings();
-      // })
-      // .on('changed', function(event){
-      //   console.log('changed', event);
-      // })
-      // .on('error', function(error, receipt) { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
-      //   console.log({error, receipt});
-      // });
+      this.paintings = paintings.filter((painting) => painting.status === 200);
     },
   },
 };

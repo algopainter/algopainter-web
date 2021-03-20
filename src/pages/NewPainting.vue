@@ -16,7 +16,7 @@
                   <v-text-field
                     v-model="entity.text"
                     :counter="64"
-                    label="Give the paiting a name"
+                    label="Give me an inspirational text"
                     required
                     autocomplete="off"
                   ></v-text-field>
@@ -44,7 +44,7 @@
                 <v-col cols="12" class="mt-n8">
                   <v-radio-group v-model="entity.useRandom" row>
                     <template v-slot:label>
-                      <div>Apply random collor inversion</div>
+                      <div>Apply random color inversion</div>
                     </template>
                     <v-radio label="Yes" value="true"></v-radio>
                     <v-radio label="No" value="false"></v-radio>
@@ -59,7 +59,7 @@
                   <v-text-field
                     v-model="entity.probability"
                     :counter="64"
-                    label="Define the probability of occurr a random color inversion"
+                    label="Define the collor inversion probability"
                     required
                     autocomplete="off"
                   ></v-text-field>
@@ -238,6 +238,9 @@ export default {
           useWall: this.entity.useWall,
           useRandom: this.entity.useRandom,
           probability: this.entity.probability,
+          amount: this.entity.amount,
+          mintedBy: this.account,
+          createdAt: new Date(),
         });
         const hash = "0x" + sha256(payload);
 

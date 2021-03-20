@@ -24,17 +24,11 @@
                 <v-col cols="12" class="mt-n9">
                   <v-radio-group v-model="entity.useWall" row>
                     <template v-slot:label>
-                      <div>Hang the painting on wall </div>
+                      <div>Hang the painting on wall</div>
                     </template>
-                    <v-radio
-                      label="Yes"
-                      value="true"
-                    ></v-radio>
-                    <v-radio
-                      label="No"
-                      value="false"
-                    ></v-radio>
-                  </v-radio-group>  
+                    <v-radio label="Yes" value="true"></v-radio>
+                    <v-radio label="No" value="false"></v-radio>
+                  </v-radio-group>
                 </v-col>
 
                 <v-col v-if="entity.useWall !== 'true'" cols="12" class="mt-n9">
@@ -42,15 +36,9 @@
                     <template v-slot:label>
                       <div>Generate a mosaic background</div>
                     </template>
-                    <v-radio
-                      label="Yes"
-                      value="true"
-                    ></v-radio>
-                    <v-radio
-                      label="No"
-                      value="false"
-                    ></v-radio>
-                  </v-radio-group>  
+                    <v-radio label="Yes" value="true"></v-radio>
+                    <v-radio label="No" value="false"></v-radio>
+                  </v-radio-group>
                 </v-col>
 
                 <v-col cols="12" class="mt-n8">
@@ -58,18 +46,16 @@
                     <template v-slot:label>
                       <div>Apply random collor inversion</div>
                     </template>
-                    <v-radio
-                      label="Yes"
-                      value="true"
-                    ></v-radio>
-                    <v-radio
-                      label="No"
-                      value="false"
-                    ></v-radio>
-                  </v-radio-group>  
+                    <v-radio label="Yes" value="true"></v-radio>
+                    <v-radio label="No" value="false"></v-radio>
+                  </v-radio-group>
                 </v-col>
 
-                <v-col v-if="entity.useRandom === 'true'"  cols="12" class="mt-n6">
+                <v-col
+                  v-if="entity.useRandom === 'true'"
+                  cols="12"
+                  class="mt-n6"
+                >
                   <v-text-field
                     v-model="entity.probability"
                     :counter="64"
@@ -84,37 +70,16 @@
                     <template v-slot:label>
                       <div>Inspiration</div>
                     </template>
-                    <v-radio
-                      label="Random"
-                      value="-1"
-                    ></v-radio>
-                    <v-radio
-                      label="Calm"
-                      value="1"
-                    ></v-radio>
-                    <v-radio
-                      label="Colorful blocks"
-                      value="2"
-                    ></v-radio>
-                    <v-radio
-                      label="Colorful paths"
-                      value="3"
-                    ></v-radio>
-                    <v-radio
-                      label="Hot flows"
-                      value="4"
-                    ></v-radio>
-                    <v-radio
-                      label="Galaxy"
-                      value="5"
-                    ></v-radio>
-                    <v-radio
-                      label="5000 days"
-                      value="6"
-                    ></v-radio>
-                  </v-radio-group>  
+                    <v-radio label="Random" value="-1"></v-radio>
+                    <v-radio label="Calm" value="1"></v-radio>
+                    <v-radio label="Colorful blocks" value="2"></v-radio>
+                    <v-radio label="Colorful paths" value="3"></v-radio>
+                    <v-radio label="Hot flows" value="4"></v-radio>
+                    <v-radio label="Galaxy" value="5"></v-radio>
+                    <v-radio label="5000 days" value="6"></v-radio>
+                  </v-radio-group>
                 </v-col>
-                <v-col cols="12" class="mt-n6"> 
+                <v-col cols="12" class="mt-n6">
                   <v-currency-field
                     v-model="entity.amount"
                     label="Pay amount"
@@ -131,42 +96,33 @@
           </v-col>
           <v-col cols="6" class="text-center">
             <v-row>
-              <v-col
-                cols="12"
-              >
-                <v-btn
-                  color="primary"
-                  @click="updateImage"
-                >
+              <v-col cols="12">
+                <v-btn color="primary" @click="updateImage">
                   <span v-if="showUpdate">Update Paiting</span>
                   <span v-else>Generate Paiting</span>
                 </v-btn>
               </v-col>
             </v-row>
             <v-row>
-              <v-col
-                cols="12"
-                v-if="parsedText !== ''"
-                class="mt-n3"
-              >
-                <paiting-view 
-                  :text="parsedText" 
-                  :createBackgroundMosaic="parsedCreateBackgroundMosaic" 
+              <v-col cols="12" v-if="parsedText !== ''" class="mt-n3">
+                <paiting-view
+                  :text="parsedText"
+                  :createBackgroundMosaic="parsedCreateBackgroundMosaic"
                   :inspiration="parsedInspiration"
                   :useWall="parsedUseWall"
                   :useRandom="parsedUseRandom"
                   :probability="parsedProbability"
-                  ></paiting-view>
+                ></paiting-view>
               </v-col>
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="entity.description"
-                    :counter="255"
-                    label="In a few words describe your feelings about this paiting"
-                    required
-                    autocomplete="off"
-                  ></v-text-field>
-                </v-col>
+              <v-col cols="12">
+                <v-text-field
+                  v-model="entity.description"
+                  :counter="255"
+                  label="In a few words describe your feelings about this paiting"
+                  required
+                  autocomplete="off"
+                ></v-text-field>
+              </v-col>
             </v-row>
           </v-col>
         </v-row>
@@ -183,11 +139,7 @@
 
         <v-row dense>
           <v-col cols="12" class="text-right">
-            <v-btn
-              color="primary"
-              class="mr-4"
-              @click="mintRobot"
-            >
+            <v-btn color="primary" class="mr-4" @click="mintRobot">
               Mint your unique paiting
               <v-icon right>mdi-file-star-outline</v-icon>
             </v-btn>
@@ -205,8 +157,7 @@ import PaitingView from "@/lib/components/ui/PaitingView";
 
 import IPFSHelper from "@/lib/helpers/IPFSHelper";
 import AlgoPainterGweiItemProxy from "@/lib/eth/AlgoPainterGweiItemProxy";
-import { sha256 } from 'js-sha256';
-
+import { sha256 } from "js-sha256";
 
 export default {
   components: {
@@ -217,19 +168,19 @@ export default {
     return {
       showUpdate: false,
       entity: {
-        text: 'My Amazing Paiting',
-        description: '',
-        createBackgroundMosaic: 'true',
-        inspiration: '-1',
-        useWall: 'true',
-        useRandom: 'false',
+        text: "My Amazing Paiting",
+        description: "",
+        createBackgroundMosaic: "true",
+        inspiration: "-1",
+        useWall: "true",
+        useRandom: "false",
         probability: 0.5,
       },
-      parsedText: '',
-      parsedCreateBackgroundMosaic: 'false',
-      parsedInspiration: '1',
-      parsedUseWall: 'true',
-      parsedUseRandom: 'true',
+      parsedText: "",
+      parsedCreateBackgroundMosaic: "false",
+      parsedInspiration: "1",
+      parsedUseWall: "true",
+      parsedUseRandom: "true",
       parsedProbability: 0.5,
       errorMsg: undefined,
       minAmount: 0,
@@ -245,8 +196,7 @@ export default {
   },
 
   watch: {
-    isConnected() {
-    },
+    isConnected() {},
   },
 
   computed: {
@@ -260,33 +210,36 @@ export default {
 
     src() {
       return `http://digital-artist-gwei.herokuapp.com/?text=${this.parsedText}&createBackgroundMosaic=${this.parsedCreateBackgroundMosaic}&inspiration=${this.parsedInspiration}&useWall=${this.parsedUseWall}&useRandom=${this.parsedUseRandom}&probability=${this.parsedProbability}`;
-    }
+    },
   },
 
-  mounted() {
-  },
+  mounted() {},
 
   methods: {
-    rulesMintRobot() {
-      
-    },
+    rulesMintRobot() {},
 
     async mintRobot() {
       try {
         this.errorMsg = "";
         this.rulesMintRobot();
-        
+
+        const urlImage = this.src;
+
+        const image = await fetch(urlImage);
+        const imageBuffer = await image.arrayBuffer();
+        const ipfsDataImage = await IPFSHelper.add(imageBuffer);
+
         const payload = JSON.stringify({
           name: this.entity.text,
           description: this.entity.description,
-          image: this.src,
+          image: `https://ipfs.io/ipfs/${ipfsDataImage.path}`,
           createBackgroundMosaic: this.entity.createBackgroundMosaic,
           inspiration: this.entity.inspiration,
           useWall: this.entity.useWall,
           useRandom: this.entity.useRandom,
           probability: this.entity.probability,
         });
-        const hash = '0x' + sha256(payload);
+        const hash = "0x" + sha256(payload);
 
         const ipfsData = await IPFSHelper.add(payload);
         const tokenURI = `https://ipfs.io/ipfs/${ipfsData.path}`;
@@ -294,7 +247,7 @@ export default {
         const amount = this.entity.amount;
         const proxy = new AlgoPainterGweiItemProxy();
 
-        const signature = '0x0';
+        const signature = "0x0";
 
         const newMint = {
           hash,

@@ -152,7 +152,7 @@ export default {
       this.loading = true;
 
       try {
-        await Promise.all([this.loadMyPaintings()]);
+        await Promise.all([this.loadPaintings()]);
       } catch (e) {
         console.log(e);
       } finally {
@@ -160,18 +160,18 @@ export default {
       }
     },
 
-    async loadMyPaintings(page) {
+    async loadPaintings(page) {
       if (!this.isConnected) {
         return;
       }
 
       const apProxy = new AlgoPainterGweiItemProxy();
-      const count = await apProxy.getPaintingsAccountCount(this.account);
+      const count = await apProxy.getPaintingsCount();
 
       this.page = page || this.page;
       this.pageCount = Math.ceil(count / this.pageSize);
 
-      const myPaintings = await apProxy.getMyPaintings(this.pageSize, this.page - 1, this.account);
+      const myPaintings = await apProxy.getPaintings(this.pageSize, this.page - 1);
 
       this.myPaintings = myPaintings.filter((painting) => painting.status === 200);
     },
@@ -188,7 +188,7 @@ export default {
       // })
       // .on('data', (event) => {
       //   console.log('data', event);
-      //   this.loadMyPaintings();
+      //   this.loadPaintings();
       // })
       // .on('changed', function(event){
       //   console.log('changed', event);

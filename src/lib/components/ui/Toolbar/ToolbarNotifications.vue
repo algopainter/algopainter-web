@@ -126,13 +126,14 @@ export default {
         return;
       }
 
-      const proxy = new AlgoPainterGweiItemProxy();
+      /*const proxy = new AlgoPainterGweiItemProxy();
       const events = proxy.events();
 
       events.allEvents({fromBlock: 0})
       .on('data', (event) => {
         this.parseNewEvent(event);
       })
+      */
     }
   }
 }

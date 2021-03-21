@@ -10,8 +10,7 @@
           offset-y="10"
         >
           <v-avatar size="40">
-            <v-img v-if="!account" src="/images/avatars/user.jpg"></v-img>
-            <v-img v-if="account" :src="`https://robohash.org/${account.toLowerCase()}?set=set1`"></v-img>
+            <v-img src="/images/avatars/user.jpg"></v-img>
           </v-avatar>
         </v-badge>
       </v-btn>

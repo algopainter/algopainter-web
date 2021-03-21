@@ -24,7 +24,7 @@
 
 <script>
 export default {
-  props: ["text", "createBackgroundMosaic", "inspiration", "useWall", "useRandom", "probability", "size"],
+  props: ["ticks", "text", "createBackgroundMosaic", "inspiration", "useWall", "useRandom", "probability", "size"],
 
   data() {
     return {
@@ -34,11 +34,11 @@ export default {
 
   computed: {
     width() {
-      return this.size || 714;
+      return this.size || 350;
     },
 
     src() {
-      return `http://digital-artist-gwei.herokuapp.com/?text=${this.text}&createBackgroundMosaic=${this.createBackgroundMosaic}&inspiration=${this.inspiration}&useWall=${this.useWall}&useRandom=${this.useRandom}&probability=${this.probability}`;
+      return `https://ms-algopainter-gwei.herokuapp.com/?ticks=${this.ticks}&text=${this.text}&createBackgroundMosaic=${this.createBackgroundMosaic}&inspiration=${this.inspiration}&useWall=${this.useWall}&useRandom=${this.useRandom}&probability=${this.probability}`;
     }
   },
 

@@ -55,11 +55,7 @@
       <v-row dense v-else>
         <v-col cols="12" md="12">
           <div class="text-center">
-            <h1 class="my-3">No paint was found</h1>
-            <v-btn color="success" @click="goToNewPainting()">
-              New Painting
-              <v-icon right>mdi-file-star-outline</v-icon>
-            </v-btn>
+            <h1 class="my-3">The gallery is empty!</h1>
           </div>
         </v-col>
       </v-row>

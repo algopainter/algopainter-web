@@ -66,6 +66,14 @@ export default class AlgoPainterGweiItemProxy {
     }
   }
 
+  async getMinimumAmount() {
+    const count = await this.getPaintingsCount();
+    const minimumAmount = await this.algoPainter.methods.getMinimumAmount(count + 1).call();
+    const ether = parseFloat(this.weiToEther(minimumAmount));
+
+    return ether;
+  }
+
   async getPainting(index) {
     try {
       const tokenURI = await this.tokenURI(index);
@@ -119,7 +127,7 @@ export default class AlgoPainterGweiItemProxy {
     return Promise.all(promises);
   }
 
-  async mint({ hash, tokenURI, signature, amount }, account) {
+  async mint({ hash, tokenURI, signature, amount }, account, cb) {
     const from = account;
     const nonce = window.web3.utils.toHex(
       await window.web3.eth.getTransactionCount(account)
@@ -131,17 +139,19 @@ export default class AlgoPainterGweiItemProxy {
       nonce,
       value: window.web3.utils.toHex(this.etherToWei(amount)),
       to,
-      data: this.algoPainter.methods.mint(hash, tokenURI, signature).encodeABI(),
+      data: this.algoPainter.methods.mint(hash, tokenURI).encodeABI(),
     };
 
     return new Promise((resolve, reject) => {
-      window.web3.eth.sendTransaction(txObject, (error, hash) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(hash);
-        }
-      });
+      window.web3.eth.sendTransaction(txObject)
+        .on('transactionHash', resolve)
+        .on('confirmation', function (confirmationNumber, receipt) {
+          cb({
+            receipt,
+            confirmationNumber
+          })
+        })
+        .on('error', reject);
     });
   }
 }

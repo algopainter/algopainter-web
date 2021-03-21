@@ -3,12 +3,36 @@
     <v-container>
       <v-card color="grey lighten-4" flat>
         <v-toolbar class="elevation-0">
-          <v-toolbar-title>New Paiting</v-toolbar-title>
+          <v-toolbar-title>New Painting</v-toolbar-title>
         </v-toolbar>
       </v-card>
       <v-divider class="my-2"></v-divider>
       <v-container>
         <v-row dense>
+          <v-col cols="12">
+            <v-alert v-if="errorMsg" outlined type="error" prominent>
+              {{ errorMsg }}
+            </v-alert>
+            <v-alert v-if="isWaitingTransaction" outlined type="info" prominent>
+              <v-progress-circular
+                indeterminate
+                color="info"
+              ></v-progress-circular>
+              Waiting for the first confirmation, if you close this window remember to check the status in your wallet!
+            </v-alert>
+            <v-alert v-if="isMinted" outlined type="success" prominent>
+              Your amazing painting has been successfully minted!
+            </v-alert>
+          </v-col>
+        </v-row>
+        <v-row dense>
+          <v-col cols="6">
+            <v-img
+              class="mx-auto"
+              width="300"
+              src="/images/project/gwei.png"
+            ></v-img>
+          </v-col>
           <v-col cols="6">
             <v-card class="pa-3">
               <v-row>
@@ -80,79 +104,103 @@
                   </v-radio-group>
                 </v-col>
                 <v-col cols="12" class="mt-n6">
-                  <v-currency-field
-                    v-model="entity.amount"
-                    label="Pay amount"
-                    required
-                    v-bind="currencyConfig"
-                  >
-                  </v-currency-field>
-                  <div class="ma-0 mt-n2 orange--text">
-                    Minimum suggested amount: {{ minAmount }}
-                  </div>
+                  <v-btn :disabled="isMinting" color="primary" block @click="updateImage">
+                    Generate Painting
+                  </v-btn>
                 </v-col>
               </v-row>
             </v-card>
           </v-col>
-          <v-col cols="6" class="text-center">
-            <v-row>
-              <v-col cols="12">
-                <v-btn color="primary" @click="updateImage">
-                  <span v-if="showUpdate">Update Paiting</span>
-                  <span v-else>Generate Paiting</span>
-                </v-btn>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" v-if="parsedText !== ''" class="mt-n3">
-                <paiting-view
-                  :text="parsedText"
-                  :createBackgroundMosaic="parsedCreateBackgroundMosaic"
-                  :inspiration="parsedInspiration"
-                  :useWall="parsedUseWall"
-                  :useRandom="parsedUseRandom"
-                  :probability="parsedProbability"
-                ></paiting-view>
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="entity.description"
-                  :counter="255"
-                  label="In a few words describe your feelings about this paiting"
-                  required
-                  autocomplete="off"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-        <v-row dense>
-          <v-col cols="12">
-            <v-alert v-if="errorMsg" outlined type="error" prominent>
-              {{ errorMsg }}
-            </v-alert>
-            <v-alert v-if="successRobot" outlined type="success" prominent>
-              Your amazing painting has been successfully minted!
-            </v-alert>
-          </v-col>
-        </v-row>
-
-        <v-row dense>
-          <v-col cols="12" class="text-right">
-            <v-btn color="primary" class="mr-4" @click="mintRobot">
-              Mint your unique paiting
-              <v-icon right>mdi-file-star-outline</v-icon>
-            </v-btn>
-          </v-col>
         </v-row>
       </v-container>
     </v-container>
+
+    <v-dialog
+      v-model="dialog"
+      width="500"
+    >
+      <v-card>
+        <v-card-title>
+          {{ this.entity.text }}
+        </v-card-title>
+
+        <v-card-text>
+          <v-row>
+            <v-col cols="12">
+              <paiting-view
+                :text="parsedText"
+                :createBackgroundMosaic="parsedCreateBackgroundMosaic"
+                :inspiration="parsedInspiration"
+                :useWall="parsedUseWall"
+                :useRandom="parsedUseRandom"
+                :probability="parsedProbability"
+                :ticks="ticks"
+              ></paiting-view>
+            </v-col>
+            <v-col cols="12" class="mt-n4">
+              <v-btn x-small color="success" block left @click="updateTicks">
+                Reload
+              </v-btn>
+            </v-col>
+            <v-col cols="12" class="mt-n5">
+              <v-text-field
+                v-model="entity.description"
+                :counter="255"
+                label="Give a description for this painting"
+                required
+                autocomplete="off"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" class="mt-n6">
+              <v-currency-field
+                v-model="entity.amount"
+                label="How much you will pay for my job?"
+                required
+                v-bind="currencyConfig"
+              >
+              </v-currency-field>
+              <div class="ma-0 mt-n2 orange--text">
+                <small>
+                  Minimum amount: {{ minAmount }}
+                </small>
+              </div>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-btn
+            v-if="!isMinting"
+            color="grey"
+            text
+            @click="clearParameters()"
+          >
+            Discard this amazing job...
+          </v-btn>
+          <small v-if="isUploadingToIPFS || isWaitingTransaction">
+            <span v-if="isUploadingToIPFS">
+              Uploading to IPFS...
+            </span>
+            <span v-if="isWaitingTransaction">
+              Waiting blockchain transaction...
+            </span>
+          </small>
+          <v-spacer></v-spacer>
+          <v-btn
+            :loading="isMinting"
+            color="primary"
+            text
+            @click="mint()"
+          >
+            Mint this job!
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
-import config from "@/configs";
-
 import PaitingView from "@/lib/components/ui/PaitingView";
 
 import IPFSHelper from "@/lib/helpers/IPFSHelper";
@@ -166,9 +214,15 @@ export default {
 
   data() {
     return {
+      ticks: Date.now(),
+      isMinting: false,
+      isUploadingToIPFS: false,
+      isWaitingTransaction: false,
+      isMinted: false,
       showUpdate: false,
+      dialog: false,
       entity: {
-        text: "My Amazing Paiting",
+        text: "My Amazing Painting",
         description: "",
         createBackgroundMosaic: "true",
         inspiration: "-1",
@@ -191,12 +245,12 @@ export default {
         autoDecimalMode: true,
         allowNegative: false,
       },
-      successRobot: false,
     };
   },
 
   watch: {
-    isConnected() {},
+    isConnected() {
+    },
   },
 
   computed: {
@@ -209,43 +263,54 @@ export default {
     },
 
     src() {
-      return `http://digital-artist-gwei.herokuapp.com/?text=${this.parsedText}&createBackgroundMosaic=${this.parsedCreateBackgroundMosaic}&inspiration=${this.parsedInspiration}&useWall=${this.parsedUseWall}&useRandom=${this.parsedUseRandom}&probability=${this.parsedProbability}`;
+      return `https://ms-algopainter-gwei.herokuapp.com/?text=${this.parsedText}&createBackgroundMosaic=${this.parsedCreateBackgroundMosaic}&inspiration=${this.parsedInspiration}&useWall=${this.parsedUseWall}&useRandom=${this.parsedUseRandom}&probability=${this.parsedProbability}`;
     },
   },
 
-  mounted() {},
+  mounted() {
+    this.clearParameters();
+  },
 
   methods: {
-    rulesMintRobot() {},
+    rules() {},
 
-    async mintRobot() {
+    async mint() {
       try {
+        this.isMinted = false;
+        this.isMinting = true;
         this.errorMsg = "";
-        this.rulesMintRobot();
+        this.rules();
 
         const urlImage = this.src;
 
+        this.isUploadingToIPFS = true;
         const image = await fetch(urlImage);
         const imageBuffer = await image.arrayBuffer();
         const ipfsDataImage = await IPFSHelper.add(imageBuffer);
 
-        const payload = JSON.stringify({
+        const baseObject = {
           name: this.entity.text,
-          description: this.entity.description,
           image: `https://ipfs.io/ipfs/${ipfsDataImage.path}`,
           createBackgroundMosaic: this.entity.createBackgroundMosaic,
           inspiration: this.entity.inspiration,
           useWall: this.entity.useWall,
           useRandom: this.entity.useRandom,
-          probability: this.entity.probability,
+          probability: this.entity.probability
+        };
+        const hash = "0x" + sha256(JSON.stringify(baseObject));
+
+        const payload = {
+          ...baseObject,
+          hash,
+          description: this.entity.description,
           amount: this.entity.amount,
           mintedBy: this.account,
           createdAt: new Date(),
-        });
-        const hash = "0x" + sha256(payload);
+        }
 
-        const ipfsData = await IPFSHelper.add(payload);
+        const ipfsData = await IPFSHelper.add(JSON.stringify(payload));
         const tokenURI = `https://ipfs.io/ipfs/${ipfsData.path}`;
+        this.isUploadingToIPFS = false;
 
         const amount = this.entity.amount;
         const proxy = new AlgoPainterGweiItemProxy();
@@ -258,15 +323,20 @@ export default {
           signature,
           amount,
         };
-
-        console.log(JSON.stringify(newMint));
-
         this.creating = true;
 
-        this.transactionHash = await proxy.mint(newMint, this.account);
-        this.successRobot = true;
+        this.transactionHash = await proxy.mint(newMint, this.account, (receipt) => {
+          this.isWaitingTransaction = false;
+          this.receipt = receipt;
+          this.isMinting = false;
+          this.isMinted = true;
+        });
+        this.isWaitingTransaction = true;
       } catch (error) {
-        console.log(error);
+        this.isMinting = false;
+        this.isWaitingTransaction = false;
+        this.isMinted = false;
+
         switch (error.code) {
           case "INVALID_MIN_AMOUNT":
             this.errorMsg =
@@ -289,31 +359,24 @@ export default {
             this.errorMsg = "Unexpected error";
         }
       } finally {
-        this.creating = false;
+        this.clearParameters();
       }
     },
 
-    showHexValue(item) {
-      return HexHelper.get32BytesHexValue(item.type, item.value);
-    },
-
-    copyCurrentBlock() {
-      this.entity.blockLimit = parseInt(this.currentBlockNumber);
-    },
-
-    closeTokenDialog() {
-      this.tokenDialog = false;
-    },
-
-    deleteOption(item) {
-      this.entity.options = this.entity.options.filter((o) => o !== item);
-    },
-
-    deleteInputData(item) {
-      this.entity.data = this.entity.data.filter((o) => o !== item);
+    updateTicks() {
+      this.ticks = Date.now();
     },
 
     async updateImage() {
+      if (!this.isConnected) {
+        return false;
+      }
+
+      const proxy = new AlgoPainterGweiItemProxy();
+
+      this.dialog = true;
+      this.minAmount = await proxy.getMinimumAmount();
+      this.entity.amount = this.minAmount;
       this.showUpdate = true;
       this.parsedText = this.entity.text;
       this.parsedCreateBackgroundMosaic = this.entity.createBackgroundMosaic;
@@ -322,6 +385,19 @@ export default {
       this.parsedUseRandom = this.entity.useRandom;
       this.parsedProbability = this.entity.probability;
     },
+
+    clearParameters() {
+      this.isUploadingToIPFS = false;
+      this.creating = false;
+      this.dialog = false;
+      this.showUpdate = false;
+      this.parsedText = '';
+      this.parsedCreateBackgroundMosaic = 'true';
+      this.parsedInspiration = '-1';
+      this.parsedUseWall = 'true';
+      this.parsedUseRandom = 'false';
+      this.parsedProbability = 0;
+    }
   },
 };
 </script>

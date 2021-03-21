@@ -10,7 +10,7 @@
         </div>
     </v-card-title>
 
-    <v-img width="300" height="300" :src="painting.response.image"></v-img>
+    <v-img height="300" :src="painting.response.image"></v-img>
 
     <v-card-text>
         <small class="d-inline-block text-truncate"

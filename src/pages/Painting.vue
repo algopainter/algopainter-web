@@ -164,7 +164,7 @@ export default {
       },
       paintings: [],
       loading: true,
-      tokenId: this.$route.params.tokenId,
+      tokenId: this.$route.params.tokenId
     };
   },
 

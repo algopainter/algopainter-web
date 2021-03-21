@@ -166,28 +166,6 @@ export default {
 
       this.myPaintings = myPaintings.filter((painting) => painting.status === 200);
     },
-
-    subscribeToEvents() {
-      // if (!this.isConnected) {
-      //   return;
-      // }
-      // const proxy = new AlgoPainterGweiItemProxy();
-      // const events = proxy.events();
-      // events.NewPaint({fromBlock: 0})
-      // .on('connected', function(subscriptionId){
-      //    console.log({subscriptionId});
-      // })
-      // .on('data', (event) => {
-      //   console.log('data', event);
-      //   this.loadMyPaintings();
-      // })
-      // .on('changed', function(event){
-      //   console.log('changed', event);
-      // })
-      // .on('error', function(error, receipt) { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
-      //   console.log({error, receipt});
-      // });
-    },
   },
 };
 </script>

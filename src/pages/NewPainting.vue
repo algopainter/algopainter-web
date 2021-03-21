@@ -4,6 +4,11 @@
       <v-card color="grey lighten-4" flat>
         <v-toolbar class="elevation-0">
           <v-toolbar-title>New Painting</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn v-if="isMinted" color="grey" class="mr-4" outlined to="/">
+            <v-icon left>mdi-view-module</v-icon>
+            Back to Gallery
+          </v-btn>
         </v-toolbar>
       </v-card>
       <v-divider class="my-2"></v-divider>
@@ -378,6 +383,7 @@ export default {
       this.minAmount = await proxy.getMinimumAmount();
       this.entity.amount = this.minAmount;
       this.showUpdate = true;
+      this.isMinted = false;
       this.parsedText = this.entity.text;
       this.parsedCreateBackgroundMosaic = this.entity.createBackgroundMosaic;
       this.parsedInspiration = this.entity.inspiration;

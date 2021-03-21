@@ -109,7 +109,7 @@
                   </v-radio-group>
                 </v-col>
                 <v-col cols="12" class="mt-n6">
-                  <v-btn :disabled="isMinting" color="primary" block @click="updateImage">
+                  <v-btn :disabled="isMinting || entity.text === ''" color="primary" block @click="updateImage">
                     Generate Painting
                   </v-btn>
                 </v-col>
@@ -268,7 +268,7 @@ export default {
     },
 
     src() {
-      return `https://ms-algopainter-gwei.herokuapp.com/?text=${this.parsedText}&createBackgroundMosaic=${this.parsedCreateBackgroundMosaic}&inspiration=${this.parsedInspiration}&useWall=${this.parsedUseWall}&useRandom=${this.parsedUseRandom}&probability=${this.parsedProbability}`;
+      return `https://ms-algopainter-gwei.herokuapp.com/?ticks=${this.ticks}&text=${encodeURIComponent(this.parsedText)}&createBackgroundMosaic=${this.parsedCreateBackgroundMosaic}&inspiration=${this.parsedInspiration}&useWall=${this.parsedUseWall}&useRandom=${this.parsedUseRandom}&probability=${this.parsedProbability}`;
     },
   },
 
@@ -343,25 +343,19 @@ export default {
         this.isMinted = false;
 
         switch (error.code) {
-          case "INVALID_MIN_AMOUNT":
+          case 'INVALID_MINIMUM_AMOUNT':
             this.errorMsg =
-              "Pay amount must be greater than or equal to the suggested amount";
+              'Your payment mast be greater than or equal to the minimum amount';
             break;
-          case "NAME_REGISTERED":
-            this.errorMsg = "The name is already in use";
-            break;
-          case "INVALID_NAME":
-            this.errorMsg = "The name invalid";
-            break;
-          case "INVALID_NAME_LENGTH":
-            this.errorMsg = "Number of characters not allowed";
+          case 'PAINTING_ALREADY_REGISTERED':
+            this.errorMsg = 'This painting was already generated for another costumer';
             break;
           case 4001:
             this.errorMsg =
-              "MetaMask Tx Signature: User denied transaction signature.";
+              'MetaMask Tx Signature: User denied transaction signature.';
             break;
           default:
-            this.errorMsg = "Unexpected error";
+            this.errorMsg = 'Unexpected error';
         }
       } finally {
         this.clearParameters();

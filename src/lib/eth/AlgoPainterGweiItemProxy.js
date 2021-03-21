@@ -67,8 +67,7 @@ export default class AlgoPainterGweiItemProxy {
   }
 
   async getMinimumAmount() {
-    const count = await this.getPaintingsCount();
-    const minimumAmount = await this.algoPainter.methods.getMinimumAmount(count + 1).call();
+    const minimumAmount = await this.algoPainter.methods.getMinimumAmount().call();
     const ether = parseFloat(this.weiToEther(minimumAmount));
 
     return ether;
@@ -127,7 +126,26 @@ export default class AlgoPainterGweiItemProxy {
     return Promise.all(promises);
   }
 
-  async mint({ hash, tokenURI, signature, amount }, account, cb) {
+  async mint({ hash, tokenURI, amount }, account, cb) {
+    const minimumAmount = await this.getMinimumAmount();
+    console.log({minimumAmount})
+
+    if (minimumAmount > amount) {
+      throw {
+        status: 409,
+        code: 'INVALID_MINIMUM_AMOUNT',
+      }
+    }
+
+    const tokenIdByHash = parseInt(await this.algoPainter.methods.getTokenByHash(hash).call());
+    console.log({ tokenIdByHash });
+    if (tokenIdByHash > 0) {
+      throw {
+        status: 409,
+        code: 'PAINTING_ALREADY_REGISTERED',
+      }
+    }
+
     const from = account;
     const nonce = window.web3.utils.toHex(
       await window.web3.eth.getTransactionCount(account)

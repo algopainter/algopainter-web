@@ -83,7 +83,7 @@
                     Apply random color inversion: 
                     <b>{{painting.useRandom === 'true' ? 'Yes': 'No'}}</b>
                   </div>
-                  <div>
+                  <div v-if="painting.useRandom === 'true'">
                     Define the collor inversion probability: 
                     <b>{{painting.probability}}</b>
                   </div>
@@ -96,10 +96,10 @@
                     <b>{{painting.mintedBy}}</b>
                   </div>
                   <div>
-                    Minted by <b>{{painting.amount}}</b> ETH
+                    Minted for <b>{{painting.amount}}</b> ETH
                   </div>
                   <div>
-                    Minted: 
+                    Minted at: 
                     <b>{{painting.createdAt}}</b>
                   </div>
                 </td>

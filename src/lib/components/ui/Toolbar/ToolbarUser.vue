@@ -89,7 +89,7 @@ export default {
     },
 
     goToWebSite() {
-      this.$router.push('/');
+      window.location = 'https://www.algopainter.art';
     },
 
     openNetworkInfoModal() {

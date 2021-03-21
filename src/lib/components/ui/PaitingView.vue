@@ -38,7 +38,7 @@ export default {
     },
 
     src() {
-      return `https://ms-algopainter-gwei.herokuapp.com/?ticks=${this.ticks}&text=${encodeURIComponent(this.text)}&createBackgroundMosaic=${this.createBackgroundMosaic}&inspiration=${this.inspiration}&useWall=${this.useWall}&useRandom=${this.useRandom}&probability=${this.probability}`;
+      return `https://gwei.algopainter.art/?ticks=${this.ticks}&text=${encodeURIComponent(this.text)}&createBackgroundMosaic=${this.createBackgroundMosaic}&inspiration=${this.inspiration}&useWall=${this.useWall}&useRandom=${this.useRandom}&probability=${this.probability}`;
     }
   },
 

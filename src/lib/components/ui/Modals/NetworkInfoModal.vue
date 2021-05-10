@@ -51,13 +51,24 @@
                 </td>
               </tr>
               <tr>
-                <td>Contract</td>
+                <td>AlgoPainter Token Contract</td>
                 <td>
                   <div 
                     class="d-inline-block text-truncate"
                     style="max-width: 250px;"
                     :title="contractAddress">
                     {{ contractAddress }}
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>Gwei Smart Contract</td>
+                <td>
+                  <div 
+                    class="d-inline-block text-truncate"
+                    style="max-width: 250px;"
+                    :title="gweiContractAddress">
+                    {{ gweiContractAddress }}
                   </div>
                 </td>
               </tr>
@@ -105,6 +116,10 @@ export default {
 
     networkInfo() {
       return this.$store.getters['user/networkInfo'];
+    },
+
+    gweiContractAddress() {
+      return this.$store.getters['user/gweiContractAddress'];
     },
 
     contractAddress() {

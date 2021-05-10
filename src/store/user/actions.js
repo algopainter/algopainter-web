@@ -1,66 +1,88 @@
-import Web3 from 'web3';
-import Config from '@/lib/Config';
+import Web3 from "web3";
+import Config from "@/lib/Config";
+
+import Web3Modal from "web3modal";
+import MewConnect from "@myetherwallet/mewconnect-web-client";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
 export default {
   disconnectFromMetaMask({ commit }) {
-    commit('setIsConnected', false);
-    commit('setAccount', '');
+    commit("setIsConnected", false);
+    commit("setAccount", "");
   },
 
   markProposal({ commit }, { proposalId, marked }) {
-    commit('markProposal', { proposalId, marked });
+    commit("markProposal", { proposalId, marked });
   },
 
-  async connectToMetaMask({ commit }) {
+  updateCurrentBlockNumber({ commit }, { blockNumber }) {
+    commit("updateCurrentBlockNumber", blockNumber);
+  },
+
+  async connectToMetaMask({ commit }, { walletConnect, metamask }) {
+    let provider = null;
+
+    if (walletConnect) {
+      provider = new WalletConnectProvider({
+        rpc: {
+          56: "https://bsc-dataseed.binance.org/"
+        },
+        chainId: 56
+      });
+
+      //  Enable session (triggers QR Code modal)
+      await provider.enable();
+    } else if (metamask) {
+      provider = window.ethereum;
+    }
+
     const configure = async ({ commit }) => {
-      const accounts = await window.ethereum.enable();
+      const accounts = await web3.eth.getAccounts();
+
       const networkInfo = {
         id: await web3.eth.net.getId(),
-        type: await web3.eth.net.getNetworkType(),
+        type: await web3.eth.net.getNetworkType()
       };
-  
-      commit('setIsConnected', true);
-      commit('setAccount', accounts[0]);
-      commit('setNetworkInfo', networkInfo);
-      commit('setContractAddress', Config.getSmartContractAddress(networkInfo.id))
+
+      commit("setIsConnected", true);
+      commit("setAccount", accounts[0]);
+      commit("setNetworkInfo", networkInfo);
+      commit(
+        "setGweiContractAddress",
+        Config.getGweiSmartContractAddress(networkInfo.id)
+      );
+      commit(
+        "setContractAddress",
+        Config.getSmartContractAddress(networkInfo.id)
+      );
     };
-  
+
     const clear = ({ commit }) => {
-      commit('setIsConnected', false);
-      commit('setAccount', null);
-      commit('setNetworkInfo', {});
-      commit('setContractAddress', '');
+      commit("setIsConnected", false);
+      commit("setAccount", null);
+      commit("setNetworkInfo", {});
+      commit("setGweiContractAddress", "");
+      commit("setContractAddress", "");
     };
 
-    if (window.ethereum) {
-      window.web3 = new Web3(window.ethereum);
+    window.web3 = new Web3(provider);
 
-      window.ethereum.on('accountsChanged', (accounts) => {
-        configure({commit});
-      });
-      
-      window.ethereum.on('networkChanged', (networkId) => {
-        window.location.reload();
-      });
+    provider.on("accountsChanged", accounts => {
+      configure({ commit });
+    });
 
-      ethereum.on('disconnect', () => {
-        clear({commit});
-      });
-      
-      try {
-        configure({commit});        
-        // await window.ethereum.request({
-        //   method: "wallet_requestPermissions",
-        //   params: [
-        //     {
-        //       eth_accounts: {}
-        //     }
-        //   ]
-      } catch (e) {
-        clear({commit});
-      }
-    } else {
-      clear({commit});
+    provider.on("networkChanged", networkId => {
+      window.location.reload();
+    });
+
+    provider.on("disconnect", () => {
+      clear({ commit });
+    });
+
+    try {
+      configure({ commit });
+    } catch (e) {
+      clear({ commit });
     }
-  },
-}
+  }
+};

@@ -1,10 +1,10 @@
-import Vue from 'vue';
+import Vue from "vue";
 
 export default {
   setAccount: (state, account) => {
     state.account = account;
   },
-  
+
   setIsConnected: (state, isConnected) => {
     state.isConnected = isConnected;
   },
@@ -13,10 +13,18 @@ export default {
     state.networkInfo = networkInfo;
   },
 
+  setGweiContractAddress: (state, gweiContractAddress) => {
+    state.gweiContractAddress = gweiContractAddress;
+  },
+
   setContractAddress: (state, contractAddress) => {
     state.contractAddress = contractAddress;
   },
-  
+
+  updateCurrentBlockNumber: (state, currentBlockNumber) => {
+    state.currentBlockNumber = currentBlockNumber;
+  },
+
   markProposal: (state, { proposalId, marked }) => {
     if (state.markedProposals[proposalId] === undefined) {
       Vue.set(state.markedProposals, proposalId, marked ? 1 : undefined);
@@ -28,6 +36,9 @@ export default {
       }
     }
 
-    localStorage.setItem('markedProposals', JSON.stringify(state.markedProposals));
+    localStorage.setItem(
+      "markedProposals",
+      JSON.stringify(state.markedProposals)
+    );
   }
-}
+};

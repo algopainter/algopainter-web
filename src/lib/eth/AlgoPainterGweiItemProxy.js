@@ -3,9 +3,9 @@ import store from "@/store";
 
 export default class AlgoPainterGweiItemProxy {
   constructor() {
-    this.contractAddress = store.getters["user/contractAddress"];
+    this.contractAddress = store.getters["user/gweiContractAddress"];
     this.algoPainter = new window.web3.eth.Contract(
-      AlgoPainterGweiItem.abi,
+      AlgoPainterGweiItem,
       this.contractAddress
     );
   }
@@ -28,6 +28,17 @@ export default class AlgoPainterGweiItemProxy {
 
   getPaintingsCount() {
     return this.algoPainter.methods.totalSupply().call();
+  }
+
+  getTotalSupply() {
+    return this.algoPainter.methods.totalSupply().call();
+  }
+
+  async getAmountToBurn() {
+    return window.web3.utils.fromWei(
+      await this.algoPainter.methods.getAmountToBurn().call(),
+      "ether"
+    );
   }
 
   tokenOfOwnerByIndex(account, index) {
@@ -55,19 +66,21 @@ export default class AlgoPainterGweiItemProxy {
           ...response,
           owner: account,
           tokenId: tokenIndex
-        },
+        }
       };
     } catch (error) {
       return {
         status: 409,
-        code: "ROBOT_NOT_LOAD",
-        response: {},
+        code: "NOT_LOAD",
+        response: {}
       };
     }
   }
 
-  async getMinimumAmount() {
-    const minimumAmount = await this.algoPainter.methods.getMinimumAmount().call();
+  async getCurrentAmount() {
+    const minimumAmount = await this.algoPainter.methods
+      .getCurrentAmount(await this.getPaintingsCount())
+      .call();
     const ether = parseFloat(this.weiToEther(minimumAmount));
 
     return ether;
@@ -88,14 +101,14 @@ export default class AlgoPainterGweiItemProxy {
         response: {
           ...response,
           owner: await this.algoPainter.methods.ownerOf(index).call(),
-          tokenId: index,
-        },
+          tokenId: index
+        }
       };
     } catch (error) {
       return {
         status: 409,
-        code: "ROBOT_NOT_LOAD",
-        response: {},
+        code: "NOT_LOAD",
+        response: {}
       };
     }
   }
@@ -126,24 +139,33 @@ export default class AlgoPainterGweiItemProxy {
     return Promise.all(promises);
   }
 
-  async mint({ hash, tokenURI, amount }, account, cb) {
-    const minimumAmount = await this.getMinimumAmount();
-    console.log({minimumAmount})
+  async checkIfAvailable({ inspiration, text, useRandom, probability }) {
+    const hash = await this.algoPainter.methods
+      .hashData(inspiration, text, useRandom, probability)
+      .call();
 
-    if (minimumAmount > amount) {
+    const tokenId = await this.algoPainter.methods.getTokenByHash(hash).call();
+
+    return tokenId.toString() === "0";
+  }
+
+  async mint(
+    { inspiration, text, useRandom, probability, place, amount, tokenURI },
+    account,
+    cb
+  ) {
+    if (
+      !(await this.checkIfAvailable({
+        inspiration,
+        text,
+        useRandom,
+        probability
+      }))
+    ) {
       throw {
         status: 409,
-        code: 'INVALID_MINIMUM_AMOUNT',
-      }
-    }
-
-    const tokenIdByHash = parseInt(await this.algoPainter.methods.getTokenByHash(hash).call());
-    console.log({ tokenIdByHash });
-    if (tokenIdByHash > 0) {
-      throw {
-        status: 409,
-        code: 'PAINTING_ALREADY_REGISTERED',
-      }
+        code: "PAINTING_ALREADY_REGISTERED"
+      };
     }
 
     const from = account;
@@ -152,24 +174,37 @@ export default class AlgoPainterGweiItemProxy {
     );
     const to = this.contractAddress;
 
+    amount = this.etherToWei(amount);
+
     const txObject = {
       from,
       nonce,
-      value: window.web3.utils.toHex(this.etherToWei(amount)),
+      value: 0,
       to,
-      data: this.algoPainter.methods.mint(hash, tokenURI).encodeABI(),
+      data: this.algoPainter.methods
+        .mint(
+          inspiration,
+          text,
+          useRandom,
+          probability,
+          place,
+          amount,
+          tokenURI
+        )
+        .encodeABI()
     };
 
     return new Promise((resolve, reject) => {
-      window.web3.eth.sendTransaction(txObject)
-        .on('transactionHash', resolve)
-        .on('confirmation', function (confirmationNumber, receipt) {
+      window.web3.eth
+        .sendTransaction(txObject)
+        .on("transactionHash", resolve)
+        .on("confirmation", function(confirmationNumber, receipt) {
           cb({
             receipt,
             confirmationNumber
-          })
+          });
         })
-        .on('error', reject);
+        .on("error", reject);
     });
   }
 }

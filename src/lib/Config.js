@@ -1,20 +1,30 @@
-export const VOTILITY_PROTOCOL_SMC_ADDRESS = process.env.VUE_APP_SMART_CONTRACT;
-export const VUE_APP_SMART_CONTRACT_3 = process.env.VUE_APP_SMART_CONTRACT_3;
-export const VUE_APP_SMART_CONTRACT_5777 = process.env.VUE_APP_SMART_CONTRACT_5777;
-//export const VOTILITY_PROTOCOL_SMC_ADDRESS = '0xB354bede9f8dDb6A1E75548C28b94B25383A2c10';
-
 export function getSmartContractAddress(networkId) {
   switch (networkId.toString()) {
-    case '3':
-      return VUE_APP_SMART_CONTRACT_3;
-    case '5777':
-      return VUE_APP_SMART_CONTRACT_5777;
-    default: 
-      return VOTILITY_PROTOCOL_SMC_ADDRESS;
+    case "56":
+      return process.env.VUE_APP_SMART_CONTRACT_56;
+    case "96":
+      return process.env.VUE_APP_SMART_CONTRACT_96;
+    case "5777":
+      return process.env.VUE_APP_SMART_CONTRACT_5777;
+    default:
+      return process.env.VUE_APP_SMART_CONTRACT;
+  }
+}
+
+export function getGweiSmartContractAddress(networkId) {
+  switch (networkId.toString()) {
+    case "56":
+      return process.env.VUE_APP_GWEI_SMART_CONTRACT_56;
+    case "96":
+      return process.env.VUE_APP_GWEI_SMART_CONTRACT_96;
+    case "5777":
+      return process.env.VUE_APP_GWEI_SMART_CONTRACT_5777;
+    default:
+      return process.env.VUE_APP_GWEI_SMART_CONTRACT;
   }
 }
 
 export default {
-  VOTILITY_PROTOCOL_SMC_ADDRESS,
   getSmartContractAddress,
-}
+  getGweiSmartContractAddress
+};

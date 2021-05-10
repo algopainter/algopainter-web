@@ -3,15 +3,13 @@
     <v-card-title>
         <div 
         class="d-inline-block text-truncate"
-        style="max-width: 250px;"
-        :title="account">
+        style="max-width: 250px;">
         #{{ painting.response.tokenId }}
-        {{ painting.response.name }}
+        {{ painting.response.text }}
         </div>
     </v-card-title>
 
-    <v-img height="300" :src="painting.response.image"></v-img>
-
+    <v-img height="300" :src="src"></v-img>
     <v-card-text>
         <small class="d-inline-block text-truncate"
         style="max-width: 250px;">
@@ -32,6 +30,12 @@
 <script>
 export default {
   props: ["painting"],
+
+  computed: {
+    src() {
+      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?text=${encodeURIComponent(this.painting.response.text)}&inspiration=${this.painting.response.inspiration}&useRandom=${this.painting.response.useRandom}&probability=${this.painting.response.probability}&wallType=${this.painting.response.place}`;
+    },
+  }
 
 };
 </script>

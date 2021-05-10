@@ -2,7 +2,7 @@
   <div>
     <v-card color="grey lighten-4" flat>
       <v-toolbar class="elevation-0">
-        <v-toolbar-title>#{{tokenId}} {{painting.name}}</v-toolbar-title>
+        <v-toolbar-title>#{{tokenId}} {{painting.text}}</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn color="grey" class="mr-4" outlined to="/">
           <v-icon left>mdi-view-module</v-icon>
@@ -28,7 +28,24 @@
               class="pa-2"
               tile
             >
-              <v-img width="714" height="714" :src="painting.image"></v-img>
+              <v-img v-show="loaded"
+                :width="width" 
+                :height="height" 
+                :src="src" 
+                @load="onLoad()"></v-img>
+              <v-skeleton-loader
+                v-if="!loaded" 
+                type="image"
+                :width="width" 
+                :height="height"
+              ></v-skeleton-loader>
+              
+              <small v-if="loaded"><a :href="raw" download target="_blank">Download the raw painting</a></small>
+              <v-select
+                v-model="innerPlace"
+                :items="places"
+                label="Do you want to see in other environment?"
+              ></v-select>
             </v-card>
           </v-card>
         </v-col>
@@ -72,12 +89,8 @@
                 <td>Parameters</td>
                 <td>
                   <div>
-                    Hang the painting on wall: 
-                    <b>{{painting.useWall === 'true' ? 'Yes': 'No'}}</b>
-                  </div>
-                  <div v-if="painting.useWall === 'false'">
-                    Generate a mosaic background: 
-                    <b>{{painting.createBackgroundMosaic === 'true' ? 'Yes': 'No'}}</b>
+                    Text: 
+                    <b>{{painting.text}}</b>
                   </div>
                   <div>
                     Apply random color inversion: 
@@ -92,11 +105,15 @@
                     <b>{{parsedInspiration}}</b>
                   </div>
                   <div>
+                    Exhibition: 
+                    <b>{{parsedPlace}}</b>
+                  </div>
+                  <div>
                     Created By: 
                     <b>{{painting.mintedBy}}</b>
                   </div>
                   <div>
-                    Minted for <b>{{painting.amount}}</b> ETH
+                    Minted for <b>{{painting.amount}}</b> $ALGOP
                   </div>
                   <div>
                     Minted at: 
@@ -121,30 +138,6 @@
         </v-btn>
       </v-card-actions>
     </v-card>
-    <v-container fluid v-if="loading">
-      <v-row dense>
-        <v-col>
-          <v-skeleton-loader
-            type="card-heading, image, list-item, list-item, actions"
-          ></v-skeleton-loader>
-        </v-col>
-        <v-col>
-          <v-skeleton-loader
-            type="card-heading, image, list-item, list-item, actions"
-          ></v-skeleton-loader>
-        </v-col>
-        <v-col>
-          <v-skeleton-loader
-            type="card-heading, image, list-item, list-item, actions"
-          ></v-skeleton-loader>
-        </v-col>
-        <v-col>
-          <v-skeleton-loader
-            type="card-heading, image, list-item, list-item, actions"
-          ></v-skeleton-loader>
-        </v-col>
-      </v-row>
-    </v-container>
   </div>
 </template>
 
@@ -160,15 +153,70 @@ export default {
   data() {
     return {
       painting: {
-
       },
+      innerPlace: '',
       paintings: [],
+      places: [
+        {
+          text: 'None',
+          value: '0',
+        },
+        {
+          text: 'Wall',
+          value: '1',
+        },
+        {
+          text: 'Big Wall',
+          value: '2',
+        },
+        {
+          text: 'Room',
+          value: '6',
+        },
+        {
+          text: 'Bedroom',
+          value: '3',
+        },
+        {
+          text: 'High-Tech Gallery',
+          value: '4',
+        },
+        {
+          text: 'Open Gallery',
+          value: '5',
+        },
+        {
+          text: 'PsyVerse',
+          value: '7',
+        },
+      ],
       loading: true,
-      tokenId: this.$route.params.tokenId
+      tokenId: this.$route.params.tokenId,
+      loaded: false,
     };
   },
 
   computed: {
+    height() {
+      return 714;
+    },
+
+    width() {
+      return 714;
+    },
+
+    src() {
+      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?text=${encodeURIComponent(this.painting.text)}&inspiration=${this.painting.inspiration}&useRandom=${this.painting.useRandom}&probability=${this.painting.probability}&wallType=${this.place}`;
+    },
+
+    raw() {
+      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?text=${encodeURIComponent(this.painting.text)}&inspiration=${this.painting.inspiration}&useRandom=${this.painting.useRandom}&probability=${this.painting.probability}&wallType=0`;
+    },
+
+    place() {
+      return this.innerPlace || this.painting.place;
+    },
+
     isConnected() {
       return this.$store.getters["user/isConnected"];
     },
@@ -179,7 +227,7 @@ export default {
 
     parsedInspiration() {
       switch(this.painting.inspiration) {
-        case '-1':
+        case '0':
           return 'Random';
         case '1':
           return 'Calm';
@@ -195,6 +243,27 @@ export default {
           return '5000 days';
         
       }
+    },
+
+    parsedPlace() {
+      switch(this.painting.place) {
+        case '0':
+          return 'None';
+        case '1':
+          return 'Wall';
+        case '2':
+          return 'Big Wall';
+        case '3':
+          return 'Bedroom';
+        case '4':
+          return 'High-Tech Gallery';
+        case '5':
+          return 'Open Gallery';
+        case '6':
+          return 'Room';
+        case '7':
+          return 'PsyVerse';
+      }
     }
   },
 
@@ -206,6 +275,11 @@ export default {
     account() {
       this.loadData();
     },
+
+    place() {
+      this.loading = true;
+      this.loaded = false;
+    }
   },
 
   mounted() {
@@ -230,6 +304,12 @@ export default {
         this.loading = false;
       }
     },
+
+    onLoad() {
+      console.log(1)
+      this.loading = false;
+      this.loaded = true;
+    }
   },
 };
 </script>

@@ -1,6 +1,5 @@
 <template>
   <v-layout class="fill-height">
-    {{$route.name}}
     <app-header />
     <v-main>
       <v-container :fluid="false" class="pt-3">
@@ -9,33 +8,34 @@
         <v-dialog
           v-model="showModal"
           persistent
-          max-width="300"
+          max-width="400"
         >
           <v-card>
             <v-card-title class="headline">
-              Connect to Metamask
+              Connect to your wallet
             </v-card-title>
             <v-card-text>
-              <v-container fill-height>
-                <v-row class="justify-center align-center">
-                  <v-col cols="12">
-                    <v-img 
-                      class="text-center"
-                      src="/images/project/metamask.svg" />  
+              <v-container>
+                <v-row align="center" justify="center">
+                  <v-col cols="6">
+                    <v-layout align-center>
+                      <v-flex shrink class="text-center">
+                        <v-img @click="connectToMetaMask()" width="180" style="cursor: pointer" class="justify-center" :src="`/images/project/metamask.png`" />
+                        <div class="text-center">Metamask</div>
+                      </v-flex>
+                    </v-layout>
+                  </v-col>
+                  <v-col cols="6">
+                    <v-layout align-center>
+                      <v-flex shrink class="text-center">
+                        <v-img @click="connectToWalletConnect()" width="180" style="cursor: pointer" class="justify-center" :src="`/images/project/walletconnect.png`" />
+                        <div class="text-center">WalletConnect</div>
+                      </v-flex>
+                    </v-layout>
                   </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="green darken-1"
-                text
-                @click="connectToMetaMask"
-              >
-                Connect
-              </v-btn>
-            </v-card-actions>
           </v-card>
         </v-dialog>
       </v-container>
@@ -64,19 +64,50 @@ export default {
     isConnected() {
       return this.$store.getters['user/isConnected'];
     },
+
+    currentBlockNumber() {
+      return this.$store.getters['user/currentBlockNumber'];
+    },
   },
 
   watch: {
     isConnected() {
       this.showModal = !this.isConnected;
+      this.watchBlockchain();
     }
+  },
+
+  mounted() {
   },
 
   methods: {
     connectToMetaMask() {
       if (!this.isConnected) {
-        this.$store.dispatch('user/connectToMetaMask');
+        this.$store.dispatch('user/connectToMetaMask', {metamask: true});
       }
+    },
+
+    connectToWalletConnect() {
+      if (!this.isConnected) {
+        this.$store.dispatch('user/connectToMetaMask', {walletConnect: true});
+      }
+    },
+
+    async watchBlockchain() {
+      if(!this.isConnected) {
+        return;
+      }
+
+      web3.eth.clearSubscriptions();
+      await this.updateCurrentBlock();
+      web3.eth.subscribe('newBlockHeaders', () => {
+        this.updateCurrentBlock();
+      });
+    },
+
+    async updateCurrentBlock() {
+      const blockNumber = await web3.eth.getBlockNumber();
+      this.$store.dispatch('user/updateCurrentBlockNumber', {blockNumber});
     }
   }
 }

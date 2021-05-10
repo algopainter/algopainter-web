@@ -24,7 +24,7 @@
 
 <script>
 export default {
-  props: ["ticks", "text", "createBackgroundMosaic", "inspiration", "useWall", "useRandom", "probability", "size"],
+  props: ["ticks", "text", "inspiration", "useRandom", "wallType", "probability", "size"],
 
   data() {
     return {
@@ -38,7 +38,7 @@ export default {
     },
 
     src() {
-      return `https://gwei.algopainter.art/?ticks=${this.ticks}&text=${encodeURIComponent(this.text)}&createBackgroundMosaic=${this.createBackgroundMosaic}&inspiration=${this.inspiration}&useWall=${this.useWall}&useRandom=${this.useRandom}&probability=${this.probability}`;
+      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?ticks=${this.ticks}&text=${encodeURIComponent(this.text)}&inspiration=${this.inspiration}&useRandom=${this.useRandom}&probability=${this.probability}&wallType=${this.wallType}`;
     }
   },
 

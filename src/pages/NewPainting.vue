@@ -1,6 +1,25 @@
 <template>
   <div>
     <v-container>
+      <v-row dense>
+        <v-col
+          v-for="(stat, i) in stats"
+          :key="i"
+          cols="12"
+          md="6"
+          lg="3"
+        >
+          <v-card class="pa-3 text-center">
+            <div class="overline mb-2">
+              <v-icon :color="stat.color">{{stat.icon}}</v-icon>
+              {{ stat.title }}
+            </div>
+            <div class="text-h4">{{ stat.value }}</div>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-container>
       <v-card color="grey lighten-4" flat>
         <v-toolbar class="elevation-0">
           <v-toolbar-title>New Painting</v-toolbar-title>
@@ -39,7 +58,7 @@
             ></v-img>
           </v-col>
           <v-col cols="6">
-            <v-card class="pa-3">
+            <v-card class="pa-3"  v-if="hasAllowance">
               <v-row>
                 <v-col cols="12">
                   <v-text-field
@@ -50,26 +69,6 @@
                     autocomplete="off"
                   ></v-text-field>
                 </v-col>
-                <v-col cols="12" class="mt-n9">
-                  <v-radio-group v-model="entity.useWall" row>
-                    <template v-slot:label>
-                      <div>Hang the painting on wall</div>
-                    </template>
-                    <v-radio label="Yes" value="true"></v-radio>
-                    <v-radio label="No" value="false"></v-radio>
-                  </v-radio-group>
-                </v-col>
-
-                <v-col v-if="entity.useWall !== 'true'" cols="12" class="mt-n9">
-                  <v-radio-group v-model="entity.createBackgroundMosaic" row>
-                    <template v-slot:label>
-                      <div>Generate a mosaic background</div>
-                    </template>
-                    <v-radio label="Yes" value="true"></v-radio>
-                    <v-radio label="No" value="false"></v-radio>
-                  </v-radio-group>
-                </v-col>
-
                 <v-col cols="12" class="mt-n8">
                   <v-radio-group v-model="entity.useRandom" row>
                     <template v-slot:label>
@@ -79,7 +78,6 @@
                     <v-radio label="No" value="false"></v-radio>
                   </v-radio-group>
                 </v-col>
-
                 <v-col
                   v-if="entity.useRandom === 'true'"
                   cols="12"
@@ -90,27 +88,43 @@
                     :counter="64"
                     label="Define the collor inversion probability"
                     required
+                    maxlength="64"
                     autocomplete="off"
                   ></v-text-field>
                 </v-col>
 
-                <v-col cols="12" class="mt-n10">
-                  <v-radio-group v-model="entity.inspiration">
-                    <template v-slot:label>
-                      <div>Inspiration</div>
-                    </template>
-                    <v-radio label="Random" value="-1"></v-radio>
-                    <v-radio label="Calm" value="1"></v-radio>
-                    <v-radio label="Colorful blocks" value="2"></v-radio>
-                    <v-radio label="Colorful paths" value="3"></v-radio>
-                    <v-radio label="Hot flows" value="4"></v-radio>
-                    <v-radio label="Galaxy" value="5"></v-radio>
-                    <v-radio label="5000 days" value="6"></v-radio>
-                  </v-radio-group>
+                <v-col cols="12" class="mt-n6">
+                  <v-select
+                    v-model="entity.inspiration"
+                    :items="inspirations"
+                    label="Inspiration"
+                  ></v-select>
+                </v-col>
+                <v-col cols="12" class="mt-n6">
+                  <v-select
+                    v-model="entity.wallType"
+                    :items="places"
+                    label="Exhibition (you can change it later)"
+                  ></v-select>
                 </v-col>
                 <v-col cols="12" class="mt-n6">
                   <v-btn :disabled="isMinting || entity.text === ''" color="primary" block @click="updateImage">
                     Generate Painting
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-card>
+
+            <v-card class="pa-3" v-if="!hasAllowance">
+              <v-row>
+                <v-col cols="12">
+                  <v-alert outlined type="info" prominent>
+                    You need to approve Gwei smart contract to spend ALGOP.
+                  </v-alert>
+                </v-col>
+                <v-col cols="12" class="mt-n6">
+                  <v-btn color="primary" block @click="approve">
+                    Approve Gwei
                   </v-btn>
                 </v-col>
               </v-row>
@@ -134,11 +148,10 @@
             <v-col cols="12">
               <paiting-view
                 :text="parsedText"
-                :createBackgroundMosaic="parsedCreateBackgroundMosaic"
                 :inspiration="parsedInspiration"
-                :useWall="parsedUseWall"
                 :useRandom="parsedUseRandom"
                 :probability="parsedProbability"
+                :wallType="parsedWallType"
                 :ticks="ticks"
               ></paiting-view>
             </v-col>
@@ -151,24 +164,22 @@
               <v-text-field
                 v-model="entity.description"
                 :counter="255"
-                label="Give a description for this painting"
+                maxlength="255"
+                label="Give a description for your painting"
                 required
                 autocomplete="off"
               ></v-text-field>
             </v-col>
             <v-col cols="12" class="mt-n6">
-              <v-currency-field
-                v-model="entity.amount"
-                label="How much you will pay for my job?"
-                required
-                v-bind="currencyConfig"
-              >
-              </v-currency-field>
-              <div class="ma-0 mt-n2 orange--text">
+              <v-alert type="error" prominent>
+                <div class="title">
+                  {{entity.amount}} $ALGOP
+                </div>
                 <small>
-                  Minimum amount: {{ minAmount }}
+                  You will pay {{entity.amount}} $ALGOP to mint this amazing job, however
+                  this price can change if the batch changes!
                 </small>
-              </div>
+              </v-alert>
             </v-col>
           </v-row>
         </v-card-text>
@@ -195,6 +206,7 @@
             :loading="isMinting"
             color="primary"
             text
+            :disabled="!entity.description"
             @click="mint()"
           >
             Mint this job!
@@ -210,6 +222,7 @@ import PaitingView from "@/lib/components/ui/PaitingView";
 
 import IPFSHelper from "@/lib/helpers/IPFSHelper";
 import AlgoPainterGweiItemProxy from "@/lib/eth/AlgoPainterGweiItemProxy";
+import AlgoPainterTokenProxy from "@/lib/eth/AlgoPainterTokenProxy";
 import { sha256 } from "js-sha256";
 
 export default {
@@ -219,6 +232,70 @@ export default {
 
   data() {
     return {
+      inspirations: [
+        {
+          text: 'Random',
+          value: '0',
+        },
+        {
+          text: 'Calm',
+          value: '1',
+        },
+        {
+          text: 'Colorful blocks',
+          value: '2',
+        },
+        {
+          text: 'Colorful paths',
+          value: '3',
+        },
+        {
+          text: 'Hot flows',
+          value: '4',
+        },
+        {
+          text: 'Galaxy',
+          value: '5',
+        },
+        {
+          text: 'Madness',
+          value: '6',
+        },
+      ],
+      places: [
+        {
+          text: 'None',
+          value: '0',
+        },
+        {
+          text: 'Wall',
+          value: '1',
+        },
+        {
+          text: 'Big Wall',
+          value: '2',
+        },
+        {
+          text: 'Room',
+          value: '6',
+        },
+        {
+          text: 'Bedroom',
+          value: '3',
+        },
+        {
+          text: 'High-Tech Gallery',
+          value: '4',
+        },
+        {
+          text: 'Open Gallery',
+          value: '5',
+        },
+        {
+          text: 'PsyVerse',
+          value: '7',
+        },
+      ],
       ticks: Date.now(),
       isMinting: false,
       isUploadingToIPFS: false,
@@ -229,36 +306,71 @@ export default {
       entity: {
         text: "My Amazing Painting",
         description: "",
-        createBackgroundMosaic: "true",
-        inspiration: "-1",
-        useWall: "true",
+        inspiration: "1",
         useRandom: "false",
         probability: 0.5,
+        wallType: "1",
       },
       parsedText: "",
-      parsedCreateBackgroundMosaic: "false",
       parsedInspiration: "1",
-      parsedUseWall: "true",
       parsedUseRandom: "true",
       parsedProbability: 0.5,
+      parsedWallType: "1",
       errorMsg: undefined,
       minAmount: 0,
       currencyConfig: {
-        prefix: "ETH",
+        prefix: "ALGOP",
         suffix: "",
         decimalLength: 2,
         autoDecimalMode: true,
         allowNegative: false,
       },
+
+      hasAllowance: false,
+      totalSupply: 0,
+      amountToBurn: 0,
     };
   },
 
   watch: {
     isConnected() {
+      this.updateInfo();
+    },
+
+    currentBlockNumber() {
+      this.updateInfo();
+    },
+    
+    account() {
+      this.updateInfo();
     },
   },
 
   computed: {
+    stats() {
+      return [{
+        icon: 'mdi-wallet',
+        color: 'success',
+        title: 'Batch Price ($ALGOP)',
+        value: this.minAmount
+      }, {
+        icon: 'mdi-lock-open-variant-outline',
+        color: 'green',
+        title: 'Remaining',
+        value: 1000 - this.totalSupply,
+      },{
+        icon: 'mdi-lock-outline',
+        color: 'primary',
+        title: 'Minted',
+        value: this.totalSupply
+      }, {
+        icon: 'mdi-fire',
+        color: 'yellow',
+        title: 'Tokens to Burn ($ALGOP)',
+        value: this.amountToBurn,
+      }];
+    },
+
     isConnected() {
       return this.$store.getters["user/isConnected"];
     },
@@ -267,13 +379,29 @@ export default {
       return this.$store.getters["user/account"];
     },
 
+    gweiContractAddress() {
+      return this.$store.getters['user/gweiContractAddress'];
+    },
+
+    contractAddress() {
+      return this.$store.getters['user/contractAddress'];
+    },
+
+    currentBlockNumber() {
+      return this.$store.getters['user/currentBlockNumber'];
+    },
+
     src() {
-      return `https://gwei.algopainter.art/?ticks=${this.ticks}&text=${encodeURIComponent(this.parsedText)}&createBackgroundMosaic=${this.parsedCreateBackgroundMosaic}&inspiration=${this.parsedInspiration}&useWall=${this.parsedUseWall}&useRandom=${this.parsedUseRandom}&probability=${this.parsedProbability}`;
+      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?ticks=${this.ticks}&text=${encodeURIComponent(this.parsedText)}&inspiration=${this.parsedInspiration}&useRandom=${this.parsedUseRandom}&probability=${this.parsedProbability}&wallType=${this.parsedWallType}`;
     },
   },
 
   mounted() {
     this.clearParameters();
+  },
+
+  mounted() {
+    this.updateInfo();
   },
 
   methods: {
@@ -288,44 +416,43 @@ export default {
 
         const urlImage = this.src;
 
-        this.isUploadingToIPFS = true;
-        const image = await fetch(urlImage);
-        const imageBuffer = await image.arrayBuffer();
-        const ipfsDataImage = await IPFSHelper.add(imageBuffer);
-
-        const baseObject = {
-          name: this.entity.text,
-          image: `https://ipfs.io/ipfs/${ipfsDataImage.path}`,
-          createBackgroundMosaic: this.entity.createBackgroundMosaic,
-          inspiration: this.entity.inspiration,
-          useWall: this.entity.useWall,
-          useRandom: this.entity.useRandom,
-          probability: this.entity.probability
-        };
-        const hash = "0x" + sha256(JSON.stringify(baseObject));
+        // this.isUploadingToIPFS = true;
+        // const image = await fetch(urlImage);
+        // const imageBuffer = await image.arrayBuffer();
+        // const ipfsDataImage = await IPFSHelper.add(imageBuffer);
 
         const payload = {
-          ...baseObject,
-          hash,
+          // image: `https://ipfs.io/ipfs/${ipfsDataImage.path}`,
+          image: this.src,
+          text: this.entity.text,
+          inspiration: this.entity.inspiration,
+          useRandom: this.entity.useRandom,
+          probability: this.entity.probability,
+          place: this.entity.wallType,
           description: this.entity.description,
           amount: this.entity.amount,
           mintedBy: this.account,
           createdAt: new Date(),
         }
 
+        console.log({payload});
+
         const ipfsData = await IPFSHelper.add(JSON.stringify(payload));
         const tokenURI = `https://ipfs.io/ipfs/${ipfsData.path}`;
         this.isUploadingToIPFS = false;
 
+        console.log({tokenURI})
+
         const amount = this.entity.amount;
         const proxy = new AlgoPainterGweiItemProxy();
 
-        const signature = "0x0";
-
         const newMint = {
-          hash,
+          text: this.entity.text,
+          inspiration: this.entity.inspiration,
+          useRandom: this.entity.useRandom,
+          probability: this.entity.probability * 10,
+          place: this.entity.wallType,
           tokenURI,
-          signature,
           amount,
         };
         this.creating = true;
@@ -338,6 +465,7 @@ export default {
         });
         this.isWaitingTransaction = true;
       } catch (error) {
+        console.log(error);
         this.isMinting = false;
         this.isWaitingTransaction = false;
         this.isMinted = false;
@@ -374,16 +502,15 @@ export default {
       const proxy = new AlgoPainterGweiItemProxy();
 
       this.dialog = true;
-      this.minAmount = await proxy.getMinimumAmount();
+      this.minAmount = await proxy.getCurrentAmount();
       this.entity.amount = this.minAmount;
       this.showUpdate = true;
       this.isMinted = false;
       this.parsedText = this.entity.text;
-      this.parsedCreateBackgroundMosaic = this.entity.createBackgroundMosaic;
       this.parsedInspiration = this.entity.inspiration;
-      this.parsedUseWall = this.entity.useWall;
       this.parsedUseRandom = this.entity.useRandom;
       this.parsedProbability = this.entity.probability;
+      this.parsedWallType = this.entity.wallType;
     },
 
     clearParameters() {
@@ -392,11 +519,30 @@ export default {
       this.dialog = false;
       this.showUpdate = false;
       this.parsedText = '';
-      this.parsedCreateBackgroundMosaic = 'true';
       this.parsedInspiration = '-1';
-      this.parsedUseWall = 'true';
       this.parsedUseRandom = 'false';
       this.parsedProbability = 0;
+      this.parsedWallType = '1';
+    },
+
+    async updateInfo() {
+      if (!this.isConnected) {
+        return false;
+      }
+
+      const algop = new AlgoPainterTokenProxy();
+      this.hasAllowance = await algop.hasAllowance(this.account, this.gweiContractAddress);
+
+      const proxy = new AlgoPainterGweiItemProxy();
+      this.minAmount = await proxy.getCurrentAmount();
+
+      this.totalSupply = await proxy.getTotalSupply();
+      this.amountToBurn = await proxy.getAmountToBurn();
+    },
+
+    async approve() {
+      const algop = new AlgoPainterTokenProxy();
+      await algop.approve(this.account, this.gweiContractAddress); 
     }
   },
 };

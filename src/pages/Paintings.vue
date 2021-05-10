@@ -91,7 +91,7 @@ export default {
     return {
       page: 1,
       pageCount: 0,
-      pageSize: 8,
+      pageSize: 16,
       paintings: [],
       loading: true,
     };

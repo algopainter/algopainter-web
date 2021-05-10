@@ -97,7 +97,7 @@
                     <b>{{painting.useRandom === 'true' ? 'Yes': 'No'}}</b>
                   </div>
                   <div v-if="painting.useRandom === 'true'">
-                    Define the collor inversion probability: 
+                    Define the collor inversion probability (between 0 and 1): 
                     <b>{{painting.probability}}</b>
                   </div>
                   <div>

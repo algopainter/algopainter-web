@@ -31,6 +31,7 @@
       <v-list-item
         link
         :disabled="!isConnected"
+        @click="goToDashboard"
       >
         <v-list-item-icon>
           <v-icon small>mdi-monitor-dashboard</v-icon>
@@ -90,6 +91,10 @@ export default {
 
     goToWebSite() {
       window.location = 'https://www.algopainter.art';
+    },
+
+    goToDashboard() {
+      this.$router.push('/');
     },
 
     openNetworkInfoModal() {

@@ -108,6 +108,11 @@
                   ></v-select>
                 </v-col>
                 <v-col cols="12" class="mt-n6">
+                  PIRS: 5%
+                  <br />
+                  <small><a href="https://bit.ly/algopainter-pirs" target="_blank">Learn more</a></small>
+                </v-col>
+                <v-col cols="12" class="mt-n6">
                   <v-btn :disabled="isMinting || entity.text === ''" color="primary" block @click="updateImage">
                     Generate Painting
                   </v-btn>

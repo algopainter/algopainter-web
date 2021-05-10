@@ -121,6 +121,14 @@
                   </div>
                 </td>
               </tr>
+              <tr>
+                <td>PIRS</td>
+                <td>
+                  5%
+                  <br />
+                  <small><a href="https://bit.ly/algopainter-pirs" target="_blank">Learn more</a></small>
+                </td>
+              </tr>
             </tbody>
           </template>
         </v-simple-table>

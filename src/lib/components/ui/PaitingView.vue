@@ -2,16 +2,14 @@
   <v-tooltip bottom>
     <template v-slot:activator="{ on, attrs }">
       <div v-on="on" v-bind="attrs">
-        <v-alert v-if="isLoading" outlined type="info" prominent>
-          The AlgoPainter is working for you, wait a moment! :D
+        <v-alert v-if="isLoading" outlined color="primary" prominent>
+          <v-progress-circular
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+          The AlgoPainter is working for you, wait a moment!
         </v-alert>
-        <v-skeleton-loader
-          v-if="isLoading" 
-          class="mx-auto"
-          :max-width="size"
-          type="image"
-        ></v-skeleton-loader>
-        <v-img
+        <v-img v-show="loaded"
           class="mx-auto"
           :width="width"
           :src="src"
@@ -29,6 +27,7 @@ export default {
   data() {
     return {
       isLoading: true,
+      loaded: false,
     };
   },
 
@@ -43,17 +42,20 @@ export default {
   },
 
   mounted() {
+    this.loaded = false
   },
 
   watch: {
     src() {
       this.isLoading = true;
+      this.loaded = false;
     },
   },
 
   methods: {
     load() {
       this.isLoading = false;
+      this.loaded = true;
     },
   },
 };

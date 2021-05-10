@@ -16,7 +16,7 @@
       </v-btn>
     </template>
     <v-list dense nav>
-      <v-list-item
+      <!-- <v-list-item
         link
         :disabled="isConnected"
         @click="connectToMetaMask"
@@ -27,7 +27,7 @@
         <v-list-item-content>
           <v-list-item-title>Connect To MetaMask</v-list-item-title>
         </v-list-item-content>
-      </v-list-item>
+      </v-list-item> -->
       <v-list-item
         link
         :disabled="!isConnected"

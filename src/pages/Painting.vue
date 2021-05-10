@@ -206,7 +206,7 @@ export default {
     },
 
     src() {
-      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?text=${encodeURIComponent(this.painting.text)}&inspiration=${this.painting.inspiration}&useRandom=${this.painting.useRandom}&probability=${this.painting.probability}&wallType=${this.place}`;
+      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?width=714&height=714&text=${encodeURIComponent(this.painting.text)}&inspiration=${this.painting.inspiration}&useRandom=${this.painting.useRandom}&probability=${this.painting.probability}&wallType=${this.place}`;
     },
 
     raw() {

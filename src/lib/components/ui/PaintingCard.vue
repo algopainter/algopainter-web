@@ -33,7 +33,7 @@ export default {
 
   computed: {
     src() {
-      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?text=${encodeURIComponent(this.painting.response.text)}&inspiration=${this.painting.response.inspiration}&useRandom=${this.painting.response.useRandom}&probability=${this.painting.response.probability}&wallType=${this.painting.response.place}`;
+      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?width=300&height=300&text=${encodeURIComponent(this.painting.response.text)}&inspiration=${this.painting.response.inspiration}&useRandom=${this.painting.response.useRandom}&probability=${this.painting.response.probability}&wallType=${this.painting.response.place}`;
     },
   }
 

@@ -392,7 +392,7 @@ export default {
     },
 
     src() {
-      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?ticks=${this.ticks}&text=${encodeURIComponent(this.parsedText)}&inspiration=${this.parsedInspiration}&useRandom=${this.parsedUseRandom}&probability=${this.parsedProbability}&wallType=${this.parsedWallType}`;
+      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?width=300&height=300&ticks=${this.ticks}&text=${encodeURIComponent(this.parsedText)}&inspiration=${this.parsedInspiration}&useRandom=${this.parsedUseRandom}&probability=${this.parsedProbability}&wallType=${this.parsedWallType}`;
     },
   },
 

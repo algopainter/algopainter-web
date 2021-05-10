@@ -38,7 +38,7 @@ export default {
     },
 
     src() {
-      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?ticks=${this.ticks}&text=${encodeURIComponent(this.text)}&inspiration=${this.inspiration}&useRandom=${this.useRandom}&probability=${this.probability}&wallType=${this.wallType}`;
+      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?width=300&height=300&ticks=${this.ticks}&text=${encodeURIComponent(this.text)}&inspiration=${this.inspiration}&useRandom=${this.useRandom}&probability=${this.probability}&wallType=${this.wallType}`;
     }
   },
 

@@ -50,14 +50,14 @@
           </v-col>
         </v-row>
         <v-row dense>
-          <v-col cols="6">
+          <v-col lg="6" sm="12">
             <v-img
               class="mx-auto"
               width="300"
               src="/images/project/gwei.png"
             ></v-img>
           </v-col>
-          <v-col cols="6">
+          <v-col lg="6" sm="12">
             <v-card class="pa-3"  v-if="hasAllowance">
               <v-row>
                 <v-col cols="12">

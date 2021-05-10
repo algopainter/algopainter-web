@@ -86,7 +86,7 @@
                   <v-text-field
                     v-model="entity.probability"
                     :counter="64"
-                    label="Define the collor inversion probability"
+                    label="Define the collor inversion probability (between 0 and 1)"
                     required
                     maxlength="64"
                     autocomplete="off"

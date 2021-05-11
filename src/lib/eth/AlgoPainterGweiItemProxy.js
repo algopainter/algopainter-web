@@ -56,8 +56,57 @@ export default class AlgoPainterGweiItemProxy {
 
       const controller = new AbortController();
       setTimeout(() => controller.abort(), 3000);
-      const getIPFS = await fetch(tokenURI, { signal: controller.signal });
-      const response = await getIPFS.json();
+
+      let response = null;
+
+      try {
+        const getIPFS = await fetch(tokenURI, { signal: controller.signal });
+        response = await getIPFS.json();
+      } catch (e) {
+        const text = await this.algoPainter.methods
+          .getTokenStringConfigParameter(0, index, 1)
+          .call();
+        const inspiration = (
+          await this.algoPainter.methods
+            .getTokenUint256ConfigParameter(0, index, 0)
+            .call()
+        ).toString();
+        const probability =
+          parseInt(
+            (
+              await this.algoPainter.methods
+                .getTokenUint256ConfigParameter(0, index, 3)
+                .call()
+            ).toString()
+          ) / 10;
+        const place = (
+          await this.algoPainter.methods
+            .getTokenUint256ConfigParameter(0, index, 4)
+            .call()
+        ).toString();
+        const useRandom = (
+          await this.algoPainter.methods
+            .getTokenBooleanConfigParameter(0, index, 2)
+            .call()
+        ).toString();
+
+        const image = `https://gwei.algopainter.art/?text=${encodeURI(
+          text
+        )}&inspiration=${inspiration}&useRandom=${useRandom}&probability=${probability}&wallType=${place}`;
+
+        response = {
+          image,
+          text,
+          inspiration,
+          useRandom,
+          probability,
+          place,
+          description: "Recovered",
+          amount: "300",
+          createdAt: "N/A",
+          mintedBy: account
+        };
+      }
 
       return {
         status: 200,
@@ -92,19 +141,73 @@ export default class AlgoPainterGweiItemProxy {
 
       const controller = new AbortController();
       setTimeout(() => controller.abort(), 3000);
-      const getIPFS = await fetch(tokenURI, { signal: controller.signal });
-      const response = await getIPFS.json();
+
+      let response = null;
+
+      const owner = await this.algoPainter.methods.ownerOf(index).call();
+
+      try {
+        console.log({ index, tokenURI });
+        const getIPFS = await fetch(tokenURI, { signal: controller.signal });
+        response = await getIPFS.json();
+      } catch (e) {
+        console.log({ error: 1, index, tokenURI });
+        const text = await this.algoPainter.methods
+          .getTokenStringConfigParameter(0, index, 1)
+          .call();
+        const inspiration = (
+          await this.algoPainter.methods
+            .getTokenUint256ConfigParameter(0, index, 0)
+            .call()
+        ).toString();
+        const probability =
+          parseInt(
+            (
+              await this.algoPainter.methods
+                .getTokenUint256ConfigParameter(0, index, 3)
+                .call()
+            ).toString()
+          ) / 10;
+        const place = (
+          await this.algoPainter.methods
+            .getTokenUint256ConfigParameter(0, index, 4)
+            .call()
+        ).toString();
+        const useRandom = (
+          await this.algoPainter.methods
+            .getTokenBooleanConfigParameter(0, index, 2)
+            .call()
+        ).toString();
+
+        const image = `https://gwei.algopainter.art/?text=${encodeURI(
+          text
+        )}&inspiration=${inspiration}&useRandom=${useRandom}&probability=${probability}&wallType=${place}`;
+
+        response = {
+          image,
+          text,
+          inspiration,
+          useRandom,
+          probability,
+          place,
+          description: "Recovered",
+          amount: "300",
+          createdAt: "N/A",
+          mintedBy: owner
+        };
+      }
 
       return {
         status: 200,
         code: "SUCCESS",
         response: {
           ...response,
-          owner: await this.algoPainter.methods.ownerOf(index).call(),
+          owner: owner,
           tokenId: index
         }
       };
     } catch (error) {
+      console.log(error);
       return {
         status: 409,
         code: "NOT_LOAD",

@@ -399,6 +399,10 @@ export default {
     src() {
       return `${process.env.VUE_APP_GWEI_ENDPOINT}/?width=300&height=300&ticks=${this.ticks}&text=${encodeURIComponent(this.parsedText)}&inspiration=${this.parsedInspiration}&useRandom=${this.parsedUseRandom}&probability=${this.parsedProbability}&wallType=${this.parsedWallType}`;
     },
+
+    srcIPFS() {
+      return `https://gwei.algopainter.art/text=${encodeURIComponent(this.parsedText)}&inspiration=${this.parsedInspiration}&useRandom=${this.parsedUseRandom}&probability=${this.parsedProbability}&wallType=${this.parsedWallType}`;
+    },
   },
 
   mounted() {
@@ -419,16 +423,8 @@ export default {
         this.errorMsg = "";
         this.rules();
 
-        const urlImage = this.src;
-
-        // this.isUploadingToIPFS = true;
-        // const image = await fetch(urlImage);
-        // const imageBuffer = await image.arrayBuffer();
-        // const ipfsDataImage = await IPFSHelper.add(imageBuffer);
-
         const payload = {
-          // image: `https://ipfs.io/ipfs/${ipfsDataImage.path}`,
-          image: this.src,
+          image: this.srcIPFS,
           text: this.entity.text,
           inspiration: this.entity.inspiration,
           useRandom: this.entity.useRandom,
@@ -437,8 +433,9 @@ export default {
           description: this.entity.description,
           amount: this.entity.amount,
           mintedBy: this.account,
-          //createdAt: new Date(),
         }
+
+        this.isUploadingToIPFS = true;
 
         console.log({payload});
 

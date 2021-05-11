@@ -451,12 +451,14 @@ export default {
         const newMint = {
           text: this.entity.text,
           inspiration: this.entity.inspiration,
-          useRandom: this.entity.useRandom,
+          useRandom: this.entity.useRandom === 'true',
           probability: this.entity.probability * 10,
           place: this.entity.wallType,
           tokenURI,
           amount,
         };
+
+        console.log({newMint});
         this.creating = true;
 
         this.transactionHash = await proxy.mint(newMint, this.account, (receipt) => {

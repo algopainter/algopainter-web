@@ -437,7 +437,7 @@ export default {
           description: this.entity.description,
           amount: this.entity.amount,
           mintedBy: this.account,
-          createdAt: new Date(),
+          //createdAt: new Date(),
         }
 
         console.log({payload});

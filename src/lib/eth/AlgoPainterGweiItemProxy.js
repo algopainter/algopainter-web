@@ -64,29 +64,29 @@ export default class AlgoPainterGweiItemProxy {
         response = await getIPFS.json();
       } catch (e) {
         const text = await this.algoPainter.methods
-          .getTokenStringConfigParameter(0, index, 1)
+          .getTokenStringConfigParameter(0, tokenIndex, 1)
           .call();
         const inspiration = (
           await this.algoPainter.methods
-            .getTokenUint256ConfigParameter(0, index, 0)
+            .getTokenUint256ConfigParameter(0, tokenIndex, 0)
             .call()
         ).toString();
         const probability =
           parseInt(
             (
               await this.algoPainter.methods
-                .getTokenUint256ConfigParameter(0, index, 3)
+                .getTokenUint256ConfigParameter(0, tokenIndex, 3)
                 .call()
             ).toString()
           ) / 10;
         const place = (
           await this.algoPainter.methods
-            .getTokenUint256ConfigParameter(0, index, 4)
+            .getTokenUint256ConfigParameter(0, tokenIndex, 4)
             .call()
         ).toString();
         const useRandom = (
           await this.algoPainter.methods
-            .getTokenBooleanConfigParameter(0, index, 2)
+            .getTokenBooleanConfigParameter(0, tokenIndex, 2)
             .call()
         ).toString();
 

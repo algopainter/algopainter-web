@@ -83,14 +83,13 @@
                   cols="12"
                   class="mt-n6"
                 >
-                  <v-text-field
+                  Define the collor inversion probability
+                  <v-slider
+                    hint="Define the collor inversion probability"
+                    max="10"
+                    min="0"
                     v-model="entity.probability"
-                    :counter="64"
-                    label="Define the collor inversion probability (between 0 and 1)"
-                    required
-                    maxlength="64"
-                    autocomplete="off"
-                  ></v-text-field>
+                  ></v-slider>
                 </v-col>
 
                 <v-col cols="12" class="mt-n6">
@@ -313,13 +312,13 @@ export default {
         description: "",
         inspiration: "1",
         useRandom: "false",
-        probability: 0.5,
+        probability: 5,
         wallType: "1",
       },
       parsedText: "",
       parsedInspiration: "1",
       parsedUseRandom: "true",
-      parsedProbability: 0.5,
+      parsedProbability: 5,
       parsedWallType: "1",
       errorMsg: undefined,
       minAmount: 0,
@@ -401,7 +400,7 @@ export default {
     },
 
     srcIPFS() {
-      return `https://gwei.algopainter.art/text=${encodeURIComponent(this.parsedText)}&inspiration=${this.parsedInspiration}&useRandom=${this.parsedUseRandom}&probability=${this.parsedProbability}&wallType=${this.parsedWallType}`;
+      return `https://gwei.algopainter.art/?text=${encodeURIComponent(this.parsedText)}&inspiration=${this.parsedInspiration}&useRandom=${this.parsedUseRandom}&probability=${this.parsedProbability}&wallType=${this.parsedWallType}`;
     },
   },
 
@@ -428,7 +427,7 @@ export default {
           text: this.entity.text,
           inspiration: this.entity.inspiration,
           useRandom: this.entity.useRandom,
-          probability: this.entity.probability,
+          probability: parseFloat((this.entity.probability/10).toFixed(1)),
           place: this.entity.wallType,
           description: this.entity.description,
           amount: this.entity.amount,
@@ -437,13 +436,9 @@ export default {
 
         this.isUploadingToIPFS = true;
 
-        console.log({payload});
-
-        const ipfsData = await IPFSHelper.add(JSON.stringify(payload));
+        const ipfsData = await IPFSHelper.add(payload);
         const tokenURI = `https://ipfs.io/ipfs/${ipfsData.path}`;
         this.isUploadingToIPFS = false;
-
-        console.log({tokenURI})
 
         const amount = this.entity.amount;
         const proxy = new AlgoPainterGweiItemProxy();
@@ -452,7 +447,7 @@ export default {
           text: this.entity.text,
           inspiration: this.entity.inspiration,
           useRandom: this.entity.useRandom === 'true',
-          probability: this.entity.probability * 10,
+          probability: this.entity.probability,
           place: this.entity.wallType,
           tokenURI,
           amount,
@@ -513,7 +508,7 @@ export default {
       this.parsedText = this.entity.text;
       this.parsedInspiration = this.entity.inspiration;
       this.parsedUseRandom = this.entity.useRandom;
-      this.parsedProbability = this.entity.probability;
+      this.parsedProbability = parseFloat((this.entity.probability/10).toFixed(1));
       this.parsedWallType = this.entity.wallType;
     },
 

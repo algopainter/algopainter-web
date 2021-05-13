@@ -12,7 +12,7 @@
           <img src="/images/project/logo-small.png" height="56" alt="logo" class="mr-1">
           <div>
             <div class="title font-weight-bold primary--text">AlgoPainter</div>
-            <div class="overline grey--text">0.1.3-beta</div>
+            <div class="overline grey--text">0.1.4-beta</div>
           </div>
         </router-link>
 

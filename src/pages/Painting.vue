@@ -97,7 +97,7 @@
                     <b>{{painting.useRandom === 'true' ? 'Yes': 'No'}}</b>
                   </div>
                   <div v-if="painting.useRandom === 'true'">
-                    Define the collor inversion probability (between 0 and 1): 
+                    Define the collor inversion probability: 
                     <b>{{painting.probability}}</b>
                   </div>
                   <div>
@@ -115,10 +115,10 @@
                   <div>
                     Minted for <b>{{painting.amount}}</b> $ALGOP
                   </div>
-                  <div>
+                  <!-- <div>
                     Minted at: 
                     <b>{{painting.createdAt}}</b>
-                  </div>
+                  </div> -->
                 </td>
               </tr>
               <tr>
@@ -248,7 +248,7 @@ export default {
         case '5':
           return 'Galaxy';
         case '6':
-          return '5000 days';
+          return 'Madness';
         
       }
     },

@@ -107,6 +107,13 @@
                   ></v-select>
                 </v-col>
                 <v-col cols="12" class="mt-n6">
+                  <v-select
+                    v-model="entity.overlay"
+                    :items="overlays"
+                    label="Technique"
+                  ></v-select>
+                </v-col>
+                <v-col cols="12" class="mt-n6">
                   PIRS: 5%
                   <br />
                   <small><a href="https://bit.ly/algopainter-pirs" target="_blank">Learn more</a></small>
@@ -127,7 +134,7 @@
                   </v-alert>
                 </v-col>
                 <v-col cols="12" class="mt-n6">
-                  <v-btn color="primary" block @click="approve">
+                  <v-btn color="primary" :loading="isApproving" block @click="approve">
                     Approve Gwei
                   </v-btn>
                 </v-col>
@@ -156,6 +163,8 @@
                 :useRandom="parsedUseRandom"
                 :probability="parsedProbability"
                 :wallType="parsedWallType"
+                :overlay="parsedOverlay"
+                :overlayOpacity="parsedOverlayOpacity"
                 :ticks="ticks"
               ></paiting-view>
             </v-col>
@@ -300,6 +309,32 @@ export default {
           value: '7',
         },
       ],
+      overlays: [
+        {
+          text: 'Regular',
+          value: '0',
+        },
+        {
+          text: 'Splatters and Drips',
+          value: '1',
+        },
+        {
+          text: 'Dripping Paint',
+          value: '2',
+        },
+        {
+          text: 'Acrylic',
+          value: '3',
+        },
+        {
+          text: 'Freedom',
+          value: '4',
+        },
+        {
+          text: 'Heavy Brush',
+          value: '5',
+        },
+      ],
       ticks: Date.now(),
       isMinting: false,
       isUploadingToIPFS: false,
@@ -313,12 +348,16 @@ export default {
         inspiration: "1",
         useRandom: "false",
         probability: 5,
+        overlay: '0',
+        overlayOpacity: '10',
         wallType: "1",
       },
       parsedText: "",
       parsedInspiration: "1",
       parsedUseRandom: "true",
       parsedProbability: 5,
+      parsedOverlay: "0",
+      parsedOverlayOpacity: "10",
       parsedWallType: "1",
       errorMsg: undefined,
       minAmount: 0,
@@ -333,6 +372,8 @@ export default {
       hasAllowance: false,
       totalSupply: 0,
       amountToBurn: 0,
+
+      isApproving: false,
     };
   },
 
@@ -396,11 +437,11 @@ export default {
     },
 
     src() {
-      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?width=300&height=300&ticks=${this.ticks}&text=${encodeURIComponent(this.parsedText)}&inspiration=${this.parsedInspiration}&useRandom=${this.parsedUseRandom}&probability=${this.parsedProbability}&wallType=${this.parsedWallType}`;
+      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?width=300&height=300&ticks=${this.ticks}&text=${encodeURIComponent(this.parsedText)}&inspiration=${this.parsedInspiration}&useRandom=${this.parsedUseRandom}&probability=${this.parsedProbability}&wallType=${this.parsedWallType}&overlay=${this.parsedOverlay}&overlayOpacity=${this.parsedOverlayOpacity}`;
     },
 
     srcIPFS() {
-      return `https://gwei.algopainter.art/?text=${encodeURIComponent(this.parsedText)}&inspiration=${this.parsedInspiration}&useRandom=${this.parsedUseRandom}&probability=${this.parsedProbability}&wallType=${this.parsedWallType}`;
+      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?text=${encodeURIComponent(this.parsedText)}&inspiration=${this.parsedInspiration}&useRandom=${this.parsedUseRandom}&probability=${this.parsedProbability}&wallType=${this.parsedWallType}&overlay=${this.parsedOverlay}&overlayOpacity=${this.parsedOverlayOpacity}`;
     },
   },
 
@@ -431,6 +472,8 @@ export default {
           place: this.entity.wallType,
           description: this.entity.description,
           amount: this.entity.amount,
+          overlay: this.entity.overlay,
+          overlayOpacity: this.entity.overlayOpacity,
           mintedBy: this.account,
         }
 
@@ -508,6 +551,8 @@ export default {
       this.parsedText = this.entity.text;
       this.parsedInspiration = this.entity.inspiration;
       this.parsedUseRandom = this.entity.useRandom;
+      this.parsedOverlay = parseInt(this.entity.overlay);
+      this.parsedOverlayOpacity = parseFloat((this.entity.overlayOpacity/10).toFixed(1));
       this.parsedProbability = parseFloat((this.entity.probability/10).toFixed(1));
       this.parsedWallType = this.entity.wallType;
     },
@@ -521,6 +566,8 @@ export default {
       this.parsedInspiration = '-1';
       this.parsedUseRandom = 'false';
       this.parsedProbability = 0;
+      this.parsedOverlay = 0;
+      this.parsedProbability = 1;
       this.parsedWallType = '1';
     },
 
@@ -541,7 +588,13 @@ export default {
 
     async approve() {
       const algop = new AlgoPainterTokenProxy();
-      await algop.approve(this.account, this.gweiContractAddress); 
+
+      try {
+        this.isApproving = true;
+        await algop.approve(this.account, this.gweiContractAddress); 
+      } finally {
+        this.isApproving = false;
+      }
     }
   },
 };

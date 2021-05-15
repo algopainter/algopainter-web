@@ -109,6 +109,10 @@
                     <b>{{parsedPlace}}</b>
                   </div>
                   <div>
+                    Technique: 
+                    <b>{{parsedOverlay}}</b>
+                  </div>
+                  <div>
                     Created By: 
                     <b>{{painting.mintedBy}}</b>
                   </div>
@@ -214,11 +218,11 @@ export default {
     },
 
     src() {
-      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?width=714&height=714&text=${encodeURIComponent(this.painting.text)}&inspiration=${this.painting.inspiration}&useRandom=${this.painting.useRandom}&probability=${this.painting.probability}&wallType=${this.place}`;
+      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?width=714&height=714&text=${encodeURIComponent(this.painting.text)}&inspiration=${this.painting.inspiration}&useRandom=${this.painting.useRandom}&probability=${this.painting.probability}&wallType=${this.place}&overlay=${this.painting.overlay}&overlayOpacity=${this.painting.overlayOpacity}`;
     },
 
     raw() {
-      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?text=${encodeURIComponent(this.painting.text)}&inspiration=${this.painting.inspiration}&useRandom=${this.painting.useRandom}&probability=${this.painting.probability}&wallType=0`;
+      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?text=${encodeURIComponent(this.painting.text)}&inspiration=${this.painting.inspiration}&useRandom=${this.painting.useRandom}&probability=${this.painting.probability}&wallType=0&overlay=${this.painting.overlay}&overlayOpacity=${this.painting.overlayOpacity}`;
     },
 
     place() {
@@ -271,6 +275,23 @@ export default {
           return 'Room';
         case '7':
           return 'PsyVerse';
+      }
+    },
+
+    parsedOverlay() {
+      switch(this.painting.overlay) {
+        case '1':
+          return 'Splatters and Drips';
+        case '2':
+          return 'Dripping Paint';
+        case '3':
+          return 'Acrylic';
+        case '4':
+          return 'Freedom';
+        case '5':
+          return 'Heavy Brush';
+        default: 
+          return 'Regular';
       }
     }
   },

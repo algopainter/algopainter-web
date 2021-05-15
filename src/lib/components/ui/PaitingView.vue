@@ -22,7 +22,7 @@
 
 <script>
 export default {
-  props: ["ticks", "text", "inspiration", "useRandom", "wallType", "probability", "size"],
+  props: ["ticks", "text", "inspiration", "useRandom", "wallType", "probability", "size", "overlay", "overlayOpacity"],
 
   data() {
     return {
@@ -37,7 +37,7 @@ export default {
     },
 
     src() {
-      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?width=300&height=300&ticks=${this.ticks}&text=${encodeURIComponent(this.text)}&inspiration=${this.inspiration}&useRandom=${this.useRandom}&probability=${this.probability}&wallType=${this.wallType}`;
+      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?width=300&height=300&ticks=${this.ticks}&text=${encodeURIComponent(this.text)}&inspiration=${this.inspiration}&useRandom=${this.useRandom}&probability=${this.probability}&wallType=${this.wallType}&overlay=${this.overlay}&overlayOpacity=${this.overlayOpacity}`;
     }
   },
 

@@ -4,8 +4,9 @@ import store from "@/store";
 import BigNumber from "bignumber.js";
 
 export default class AlgoPainterTokenProxy {
-  constructor() {
-    this.contractAddress = store.getters["user/contractAddress"];
+  constructor(contractAddress) {
+    this.contractAddress =
+      contractAddress || store.getters["user/contractAddress"];
     this.algoPainter = new window.web3.eth.Contract(
       AlgoPainterToken,
       this.contractAddress

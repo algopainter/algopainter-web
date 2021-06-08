@@ -16,7 +16,7 @@ export const routes = [
         path: "/",
         name: "/",
         component: () =>
-          import(/* webpackChunkName: "Paintings" */ "@/pages/Paintings.vue"),
+          import(/* webpackChunkName: "Paintings" */ "@/pages/Paintings.vue")
       },
       {
         path: "/my-paintings",
@@ -24,7 +24,7 @@ export const routes = [
         component: () =>
           import(
             /* webpackChunkName: "MyPaintings" */ "@/pages/MyPaintings.vue"
-          ),
+          )
       },
       {
         path: "/paintings/new",
@@ -32,16 +32,22 @@ export const routes = [
         component: () =>
           import(
             /* webpackChunkName: "NewPainting" */ "@/pages/NewPainting.vue"
-          ),
+          )
       },
       {
         path: "/paintings/:tokenId",
         name: "/",
         component: () =>
-          import(/* webpackChunkName: "Painting" */ "@/pages/Painting.vue"),
+          import(/* webpackChunkName: "Painting" */ "@/pages/Painting.vue")
       },
-    ],
-  },
+      {
+        path: "/farms",
+        name: "/farms",
+        component: () =>
+          import(/* webpackChunkName: "Pools" */ "@/pages/Farms.vue")
+      }
+    ]
+  }
 ];
 
 const router = new Router({
@@ -50,7 +56,7 @@ const router = new Router({
   scrollBehavior(to, from, savedPosition) {
     return { x: 0, y: 0 };
   },
-  routes,
+  routes
 });
 
 /**

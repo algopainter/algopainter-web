@@ -1,0 +1,13 @@
+[
+    {
+        "pid": 0,
+        "title": "BidBack / PIRS",
+        "contractAddress": {
+            "5777": "0x10A249B67729b04C59b371C59be07be2A69374F5"
+        },
+        "tokenSymbol": "ALGOP",
+        "tokenAddress": {
+            "5777": "0x97C42c781a7900Df9A36ba1f366cD7F2fD87F43D"
+        }
+    }
+]

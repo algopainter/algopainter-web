@@ -31,6 +31,7 @@
         </v-toolbar>
       </v-card>
       <v-divider class="my-2"></v-divider>
+      <v-alert type="error" v-if="!account">You are not connected! Please check in your wallet.</v-alert>
       <v-container>
         <v-row dense>
           <v-col lg="6" sm="12">
@@ -135,6 +136,7 @@
                   color="primary"
                   :disabled="!loaded || !name || !description || !isFeeWarningOk"
                   text
+                  :disable="!account"
                   :loading="isMinting"
                   @click="startMintingProcess"
                 >
@@ -602,5 +604,9 @@ export default {
   .blur {
     -webkit-filter: blur(5px); /* Safari 6.0 - 9.0 */
     filter: blur(5px);
+  }
+
+  .v-alert__content {
+    overflow: auto;
   }
 </style>

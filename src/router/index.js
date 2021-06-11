@@ -16,15 +16,13 @@ export const routes = [
         path: "/",
         name: "/",
         component: () =>
-          import(/* webpackChunkName: "Paintings" */ "@/pages/Paintings.vue"),
+          import(/* webpackChunkName: "Paintings" */ "@/pages/Paintings.vue")
       },
       {
         path: "/my-paintings",
         name: "/my-paintings",
         component: () =>
-          import(
-            /* webpackChunkName: "MyPaintings" */ "@/pages/MyPaintings.vue"
-          ),
+          import(/* webpackChunkName: "MyPaintings" */ "@/pages/Paintings.vue")
       },
       {
         path: "/paintings/new",
@@ -32,16 +30,25 @@ export const routes = [
         component: () =>
           import(
             /* webpackChunkName: "NewPainting" */ "@/pages/NewPainting.vue"
-          ),
+          )
       },
       {
         path: "/paintings/:tokenId",
         name: "/",
         component: () =>
-          import(/* webpackChunkName: "Painting" */ "@/pages/Painting.vue"),
+          import(/* webpackChunkName: "Painting" */ "@/pages/Painting.vue")
       },
-    ],
-  },
+
+      {
+        path: "/collections/:id/new",
+        name: "/collections/:id/new",
+        component: () =>
+          import(
+            /* webpackChunkName: "NewCollectionItem" */ "@/pages/collections/NewItem.vue"
+          )
+      }
+    ]
+  }
 ];
 
 const router = new Router({
@@ -50,7 +57,7 @@ const router = new Router({
   scrollBehavior(to, from, savedPosition) {
     return { x: 0, y: 0 };
   },
-  routes,
+  routes
 });
 
 /**

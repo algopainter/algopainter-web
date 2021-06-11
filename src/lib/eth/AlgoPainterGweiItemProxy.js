@@ -2,8 +2,9 @@ import AlgoPainterGweiItem from "./AlgoPainterGweiItem.json";
 import store from "@/store";
 
 export default class AlgoPainterGweiItemProxy {
-  constructor() {
-    this.contractAddress = store.getters["user/gweiContractAddress"];
+  constructor(contractAddress) {
+    this.contractAddress =
+      contractAddress || store.getters["user/gweiContractAddress"];
     this.algoPainter = new window.web3.eth.Contract(
       AlgoPainterGweiItem,
       this.contractAddress

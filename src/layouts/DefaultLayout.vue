@@ -1,6 +1,6 @@
 <template>
   <v-layout class="fill-height">
-    <app-header />
+    <app-header style="z-index: 100000" />
     <v-main>
       <v-container :fluid="false" class="pt-3">
         <router-view :key="$route.fullPath"></router-view>

@@ -1,8 +1,6 @@
 import Web3 from "web3";
 import Config from "@/lib/Config";
 
-import Web3Modal from "web3modal";
-import MewConnect from "@myetherwallet/mewconnect-web-client";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 
 export default {

@@ -565,12 +565,14 @@ export default {
 
         result.on("transactionHash", () => {
           this.step = 5;
+          this.isMinting = false;
           this.isWaitingWalletApproval = false;
           this.isWaitingBlockchainConfirmation = true;
         });
 
         result.on("confirmation", () => {
           this.isMinted = true;
+          this.isMinting = false;
           this.isWaitingWalletApproval = false;
           this.isWaitingBlockchainConfirmation = false;
 

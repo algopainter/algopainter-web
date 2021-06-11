@@ -38,13 +38,20 @@ export const routes = [
         component: () =>
           import(/* webpackChunkName: "Painting" */ "@/pages/Painting.vue")
       },
-
       {
         path: "/collections/:id/new",
         name: "/collections/:id/new",
         component: () =>
           import(
             /* webpackChunkName: "NewCollectionItem" */ "@/pages/collections/NewItem.vue"
+          )
+      },
+      {
+        path: "/collections/:id/:tokenId",
+        name: "/",
+        component: () =>
+          import(
+            /* webpackChunkName: "CollectionItem" */ "@/pages/collections/Item.vue"
           )
       }
     ]

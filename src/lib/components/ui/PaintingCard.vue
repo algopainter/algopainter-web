@@ -19,10 +19,14 @@
 
     <v-divider></v-divider>
         <div class="d-flex">
-        <v-btn :to="`/paintings/${painting.tokenId}`" class="flex-grow-1" tile height="48" text>
+          <v-btn v-if="!collection" :to="`/paintings/${painting.tokenId}`" class="flex-grow-1" tile height="48" text>
             <v-icon left>mdi-share-all</v-icon>
             View
-        </v-btn>
+          </v-btn>
+          <v-btn v-else :to="`/collections/${collection}/${painting.tokenId}`" class="flex-grow-1" tile height="48" text>
+            <v-icon left>mdi-share-all</v-icon>
+            View
+          </v-btn>
         </div>
     </v-card>
 </template>

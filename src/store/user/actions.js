@@ -35,7 +35,16 @@ export default {
     }
 
     const configure = async ({ commit }) => {
-      const accounts = await web3.eth.getAccounts();
+      let accounts = await provider.request({
+        method: "eth_requestAccounts"
+      });
+
+      if (!accounts) {
+        accounts = await web3.eth.getAccounts();
+      }
+
+      console.log({ accounts });
+      console.log(!accounts);
 
       const networkInfo = {
         id: await web3.eth.net.getId(),

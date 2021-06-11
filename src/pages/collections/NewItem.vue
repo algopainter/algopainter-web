@@ -135,7 +135,8 @@
                   color="primary"
                   :disabled="!loaded || !name || !description || !isFeeWarningOk"
                   text
-                  @click="generateRawImage"
+                  :loading="isMinting"
+                  @click="startMintingProcess"
                 >
                   Mint this artwork
                 </v-btn>
@@ -255,6 +256,7 @@ export default {
       loaded: false,
       isConfigured: false,
       isMinted: false,
+      isMinting: false,
       availableSupply: 0,
       currentAmount: 0,
       formattedCurrentAmount: 0,
@@ -445,18 +447,22 @@ export default {
       this.isWaitingWalletApproval = false;
       this.isWaitingBlockchainConfirmation = false;
       this.isError = false;
+      this.isMinting = false;
     },
 
-    async generateRawImage() {
+    async startMintingProcess() {
       try {
         const collectionController = new CollectionController();
         const mint = await collectionController.getMintMethod(this.networkInfo, this.collection.id);
 
         this.setModalInitialState();
 
+        this.isMinting = true;
+
         try {
           await mint(this.intParameters, this.currentAmount, "").call({
-            value: this.currentAmount
+            value: this.currentAmount,
+            from: this.account,
           });
         } catch (e) {
           this.setModalInitialState();
@@ -489,8 +495,9 @@ export default {
         this.previewIPFSHash = previewPiningResult.ipfsHash;
 
         if (!this.previewIPFSHash) {
-            this.isError = true;
-           this.errorMessage = "An error has occured while generating preview file!";
+          this.setModalInitialState();
+          this.isError = true;
+          this.errorMessage = "An error has occured while generating preview file!";
           return;
         }
         
@@ -499,8 +506,9 @@ export default {
         this.rawIPFSHash = rawPiningResult.ipfsHash;
 
         if (!this.rawIPFSHash) {
-            this.isError = true;
-           this.errorMessage = "An error has occured while generating raw file!";
+          this.setModalInitialState();
+          this.isError = true;
+          this.errorMessage = "An error has occured while generating raw file!";
           return;
         }
         
@@ -521,8 +529,9 @@ export default {
         this.descriptorIPFSHash = descriptorPinningResult.ipfsHash;
 
         if (!this.descriptorIPFSHash) {
-            this.isError = true;
-           this.errorMessage = "An error has occured while generating descriptor file!";
+          this.setModalInitialState();
+          this.isError = true;
+          this.errorMessage = "An error has occured while generating descriptor file!";
           return;
         }
 

@@ -388,7 +388,7 @@
                 "displayName": "Use Shadow",
                 "type": "bool",
                 "widget": "checkbox",
-                "defaultValue": true
+                "defaultValue": false
             },
             {
                 "name": "shadowHue",
@@ -402,7 +402,7 @@
                 "displayName": "Flip",
                 "type": "bool",
                 "widget": "checkbox",
-                "defaultValue": true
+                "defaultValue": false
             }
         ]
     }

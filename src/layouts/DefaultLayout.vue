@@ -1,6 +1,6 @@
 <template>
   <v-layout class="fill-height">
-    <app-header />
+    <app-header style="z-index: 100000" />
     <v-main>
       <v-container :fluid="false" class="pt-3">
         <router-view :key="$route.fullPath"></router-view>
@@ -16,7 +16,10 @@
             </v-card-title>
             <v-card-text>
               <v-container>
-                <v-row align="center" justify="center">
+                <v-row class="d-flex justify-center flex-row" v-if="isTrustWallet">
+                  <img @click="connectToMetaMask()" style="cursor: pointer; width: 250px" :src="`/images/project/trustwallet-logo.png`" />
+                </v-row>
+                <v-row align="center" justify="center" v-else>
                   <v-col cols="6">
                     <v-layout align-center>
                       <v-flex shrink class="text-center">
@@ -68,6 +71,10 @@ export default {
     currentBlockNumber() {
       return this.$store.getters['user/currentBlockNumber'];
     },
+
+    isTrustWallet () {
+      return window.ethereum && window.ethereum.isTrust;
+    }
   },
 
   watch: {

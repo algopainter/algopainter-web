@@ -4,8 +4,8 @@
         <div 
         class="d-inline-block text-truncate"
         style="max-width: 250px;">
-        #{{ painting.response.tokenId }}
-        {{ painting.response.text }}
+        #{{ painting.tokenId }}
+        {{ painting.text || painting.name }}
         </div>
     </v-card-title>
 
@@ -13,29 +13,36 @@
     <v-card-text>
         <small class="d-inline-block text-truncate"
         style="max-width: 250px;">
-        {{ painting.response.description }}
+        {{ painting.description }}
         </small>
     </v-card-text>
 
     <v-divider></v-divider>
         <div class="d-flex">
-        <v-btn :to="`/paintings/${painting.response.tokenId}`" class="flex-grow-1" tile height="48" text>
+          <v-btn v-if="!collection" :to="`/paintings/${painting.tokenId}`" class="flex-grow-1" tile height="48" text>
             <v-icon left>mdi-share-all</v-icon>
             View
-        </v-btn>
+          </v-btn>
+          <v-btn v-else :to="`/collections/${collection}/${painting.tokenId}`" class="flex-grow-1" tile height="48" text>
+            <v-icon left>mdi-share-all</v-icon>
+            View
+          </v-btn>
         </div>
     </v-card>
 </template>
 
 <script>
 export default {
-  props: ["painting"],
+  props: ["painting", "collection"],
 
   computed: {
     src() {
-      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?width=300&height=300&text=${encodeURIComponent(this.painting.response.text)}&inspiration=${this.painting.response.inspiration}&useRandom=${this.painting.response.useRandom}&probability=${this.painting.response.probability}&wallType=${this.painting.response.place}&overlay=${this.painting.response.overlay}&overlayOpacity=${this.painting.response.overlayOpacity}`;
+      if (!this.collection) {
+        return `${process.env.VUE_APP_GWEI_ENDPOINT}/?width=300&height=300&text=${encodeURIComponent(this.painting.text)}&inspiration=${this.painting.inspiration}&useRandom=${this.painting.useRandom}&probability=${this.painting.probability}&wallType=${this.painting.place}&overlay=${this.painting.overlay}&overlayOpacity=${this.painting.overlayOpacity}`;
+      } else {
+        return this.painting.previewImage;
+      }
     },
   }
-
 };
 </script>

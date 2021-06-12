@@ -335,7 +335,6 @@ export default {
     },
 
     onLoad() {
-      console.log(1)
       this.loading = false;
       this.loaded = true;
     }

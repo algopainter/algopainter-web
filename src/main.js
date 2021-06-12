@@ -2,6 +2,7 @@ import Vue from "vue";
 import App from "./App.vue";
 import VueApexCharts from "vue-apexcharts";
 import VueCodeHighlight from "vue-code-highlight";
+import VueWorker from "vue-worker";
 
 import IPFSHelper from "@/lib/helpers/IPFSHelper";
 
@@ -11,6 +12,7 @@ Vue.use(VueApexCharts);
 Vue.use(VueCodeHighlight);
 
 Vue.component("apexchart", VueApexCharts);
+Vue.use(VueWorker);
 
 import store from "./store";
 
@@ -39,5 +41,5 @@ export default new Vue({
   vuetify,
   router,
   store,
-  render: (h) => h(App),
+  render: h => h(App)
 }).$mount("#app");

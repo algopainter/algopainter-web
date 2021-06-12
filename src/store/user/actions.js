@@ -1,8 +1,6 @@
 import Web3 from "web3";
 import Config from "@/lib/Config";
 
-import Web3Modal from "web3modal";
-import MewConnect from "@myetherwallet/mewconnect-web-client";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 
 export default {
@@ -37,7 +35,16 @@ export default {
     }
 
     const configure = async ({ commit }) => {
-      const accounts = await web3.eth.getAccounts();
+      let accounts = await provider.request({
+        method: "eth_requestAccounts"
+      });
+
+      if (!accounts) {
+        accounts = await web3.eth.getAccounts();
+      }
+
+      console.log({ accounts });
+      console.log(!accounts);
 
       const networkInfo = {
         id: await web3.eth.net.getId(),

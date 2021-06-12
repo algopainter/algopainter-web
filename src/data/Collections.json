@@ -26,6 +26,36 @@
             "instagram": "https://www.instagram.com/algopainter",
             "avatar": "/images/manwithnoname.jpeg"
         },
+        "pricing": {
+            "type": "batches",
+            "ranges": [
+                {
+                    "start": 1,
+                    "finish": 300,
+                    "price": 0.1
+                },
+                {
+                    "start": 301,
+                    "finish": 500,
+                    "price": 0.2
+                },
+                {
+                    "start": 501,
+                    "finish": 600,
+                    "price": 0.3
+                },
+                {
+                    "start": 601,
+                    "finish": 700,
+                    "price": 0.4
+                },
+                {
+                    "start": 701,
+                    "finish": 750,
+                    "price": 0.5
+                }
+            ]
+        },
         "layers": {
             "baseUrl": "https://expressions.algopainter.art/expressions-resized/400x400",
             "rawBaseUrl": "https://expressions.algopainter.art/expressions-resized/2000x2000",

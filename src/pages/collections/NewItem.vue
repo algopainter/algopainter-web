@@ -10,11 +10,13 @@
           lg="4"
         >
           <v-card class="pa-3 text-center">
-            <div class="overline mb-2">
-              <v-icon :color="stat.color">{{stat.icon}}</v-icon>
-              {{ stat.title }}
+            <div @click="showPricing(stat)" :class="{clickable: stat.showPricing}">
+              <div class="overline mb-2">
+                <v-icon :color="stat.color">{{stat.icon}}</v-icon>
+                {{ stat.title }}
+              </div>
+              <div class="text-h4">{{ stat.value }}</div>
             </div>
-            <div class="text-h4">{{ stat.value }}</div>
           </v-card>
         </v-col>
       </v-row>
@@ -213,7 +215,7 @@
             </div>
             <v-checkbox
               v-model="isRawFileWarningOk"
-              label="I have checked the raw file and it is extactly what I want!"
+              label="I have checked the raw file and it is exactly what I want!"
             ></v-checkbox>
             <v-checkbox
               class="mt-n2"
@@ -229,6 +231,47 @@
               Finish the process
             </v-btn>
           </div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog 
+      v-model="isPricingOpen"
+      width="500"
+    >
+      <v-card>
+        <v-card-title>
+          Pricing table for {{collection.name}}
+        </v-card-title>
+        <v-card-text>
+          <v-simple-table>
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-left">
+                    Range
+                  </th>
+                  <th class="text-left">
+                    Price
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(range, index) in collection.pricing.ranges" :key="index">
+                  <td>
+                    {{range.start}} - {{range.finish}}
+                  </td>
+                  <td>
+                    <div>
+                      {{range.price}}
+                      {{collection.baseToken}}
+                      <small>+ {{formattedServiceFee}}% of service fee</small>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -280,6 +323,8 @@ export default {
       name: "",
       description: "",
       isFeeWarningOk: false,
+
+      isPricingOpen: false,
     };
   },
 
@@ -304,6 +349,7 @@ export default {
         color: 'success',
         title: `Batch Price`,
         value: this.displayCurrentAmount,
+        showPricing: true,
       }, {
         icon: 'mdi-lock-open-variant-outline',
         color: 'green',
@@ -597,6 +643,12 @@ export default {
       this.encodedImage = await paint(this.collection, this.paintingInfo, false);
       this.isLoading = false;
       this.loaded = true;
+    },
+
+    showPricing(stat) {
+      if (stat.showPricing) {
+        this.isPricingOpen = true;
+      }
     }
   }
 };
@@ -610,5 +662,9 @@ export default {
 
   .v-alert__content {
     overflow: auto;
+  }
+
+  .clickable {
+    cursor: pointer;
   }
 </style>

@@ -116,7 +116,7 @@
                       v-model="isFeeWarningOk"
                       :label="displayFeeMessage"
                     ></v-checkbox>
-                    <div class="mt-n1"><small>Click <a href="" target="_blank">here</a> to learn more fees</small></div>
+                    <!-- <div class="mt-n1"><small>Click <a href="" target="_blank">here</a> to learn more fees</small></div> -->
                   </v-col>
                 </v-row>
                 <v-row v-if="isError">

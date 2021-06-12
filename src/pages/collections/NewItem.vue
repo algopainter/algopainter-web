@@ -34,7 +34,7 @@
       </v-card>
       <v-divider class="my-2"></v-divider>
       <v-alert type="error" v-if="!account">You are not connected! Please check in your wallet.</v-alert>
-      <v-container>
+      <v-container v-if="collection.id">
         <v-row dense>
           <v-col lg="6" sm="12">
             <v-card>

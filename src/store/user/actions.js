@@ -1,7 +1,8 @@
 import Web3 from "web3";
 import Config from "@/lib/Config";
-
 import WalletConnectProvider from "@walletconnect/web3-provider";
+
+import { getWalletConnectConfig } from "../../lib/Config";
 
 export default {
   disconnectFromMetaMask({ commit }) {
@@ -21,12 +22,9 @@ export default {
     let provider = null;
 
     if (walletConnect) {
-      provider = new WalletConnectProvider({
-        rpc: {
-          56: "https://bsc-dataseed.binance.org/"
-        },
-        chainId: 56
-      });
+      provider = new WalletConnectProvider(
+        getWalletConnectConfig(web3.eth.net.getId()),
+      );
 
       //  Enable session (triggers QR Code modal)
       await provider.enable();

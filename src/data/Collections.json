@@ -7,7 +7,8 @@
             "type": "custom",
             "address": {
                 "5777": "0x0e50BaC4E461E47F780671457d7b0C2C988CC4A6",
-                "56": "0x4b7ef899cbb24689a47a66d3864f57ec13e01b35"
+                "56": "0x4b7ef899cbb24689a47a66d3864f57ec13e01b35",
+                "97": "0x8CFD89020019bA3da8B13Cc2F3E0e5BAaF82F578"
             }
         }
     },
@@ -73,7 +74,8 @@
             "type": "custom",
             "address": {
                 "5777": "0x8a5d443a9e6cBDF290235880ebD8072611ea8EfE",
-                "56": "0xB413CCFd8E7d75d8642C81Ab012235FedD946EEB"
+                "56": "0xB413CCFd8E7d75d8642C81Ab012235FedD946EEB",
+                "97": "0xbe9CaC059835236Da5E91CD72688c43886B63419"
             },
             "abi": [
                 {

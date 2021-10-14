@@ -21,8 +21,9 @@ export const routes = [
       {
         path: "/my-paintings",
         name: "/my-paintings",
-        component: () =>
-          import(/* webpackChunkName: "MyPaintings" */ "@/pages/Paintings.vue")
+        beforeEnter() {
+          window.location.replace('https://appv2.algopainter.art/my-gallery')
+        },
       },
       {
         path: "/paintings/new",

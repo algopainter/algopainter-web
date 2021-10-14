@@ -2,16 +2,10 @@
   <div>
     <v-container>
       <v-row dense>
-        <v-col
-          v-for="(stat, i) in stats"
-          :key="i"
-          cols="12"
-          md="6"
-          lg="3"
-        >
+        <v-col v-for="(stat, i) in stats" :key="i" cols="12" md="6" lg="3">
           <v-card class="pa-3 text-center">
             <div class="overline mb-2">
-              <v-icon :color="stat.color">{{stat.icon}}</v-icon>
+              <v-icon :color="stat.color">{{ stat.icon }}</v-icon>
               {{ stat.title }}
             </div>
             <div class="text-h4">{{ stat.value }}</div>
@@ -42,7 +36,8 @@
                 indeterminate
                 color="info"
               ></v-progress-circular>
-              Waiting for the first confirmation, if you close this window remember to check the status in your wallet!
+              Waiting for the first confirmation, if you close this window
+              remember to check the status in your wallet!
             </v-alert>
             <v-alert v-if="isMinted" outlined type="success" prominent>
               Your amazing painting has been successfully minted!
@@ -58,7 +53,7 @@
             ></v-img>
           </v-col>
           <v-col lg="6" sm="12">
-            <v-card class="pa-3"  v-if="hasAllowance">
+            <v-card class="pa-3" v-if="hasAllowance">
               <v-row>
                 <v-col cols="12">
                   <v-text-field
@@ -69,6 +64,7 @@
                     autocomplete="off"
                   ></v-text-field>
                 </v-col>
+
                 <v-col cols="12" class="mt-n8">
                   <v-radio-group v-model="entity.useRandom" row>
                     <template v-slot:label>
@@ -114,12 +110,36 @@
                   ></v-select>
                 </v-col>
                 <v-col cols="12" class="mt-n6">
+                  <v-text-field
+                    v-model="entity.pirs"
+                    label="Pirs"
+                    required
+                    autocomplete="off"
+                    :rules="pirsValid"
+                    type="number"
+                  ></v-text-field>
+                </v-col>
+                <!-- <v-col cols="12" class="mt-n6">
                   PIRS: 5%
                   <br />
-                  <small><a href="https://bit.ly/algopainter-pirs" target="_blank">Learn more</a></small>
-                </v-col>
+                  <small
+                    ><a href="https://bit.ly/algopainter-pirs" target="_blank"
+                      >Learn more</a
+                    ></small
+                  >
+                </v-col> -->
                 <v-col cols="12" class="mt-n6">
-                  <v-btn :disabled="isMinting || entity.text === ''" color="primary" block @click="updateImage">
+                  <v-btn
+                    :disabled="
+                      isMinting ||
+                      entity.text === '' ||
+                      entity.pirs < 0 ||
+                      entity.pirs > 30
+                    "
+                    color="primary"
+                    block
+                    @click="updateImage"
+                  >
                     Generate Painting
                   </v-btn>
                 </v-col>
@@ -130,11 +150,16 @@
               <v-row>
                 <v-col cols="12">
                   <v-alert outlined type="info" prominent>
-                    You need to approve Gwei smart contract to spend ALGOP.
+                    You need to approve Gwei smart contract to spend ALGOP
                   </v-alert>
                 </v-col>
                 <v-col cols="12" class="mt-n6">
-                  <v-btn color="primary" :loading="isApproving" block @click="approve">
+                  <v-btn
+                    color="primary"
+                    :loading="isApproving"
+                    block
+                    @click="approve"
+                  >
                     Approve Gwei
                   </v-btn>
                 </v-col>
@@ -145,10 +170,7 @@
       </v-container>
     </v-container>
 
-    <v-dialog
-      v-model="dialog"
-      width="500"
-    >
+    <v-dialog v-model="dialog" width="500">
       <v-card>
         <v-card-title>
           {{ this.entity.text }}
@@ -185,12 +207,10 @@
             </v-col>
             <v-col cols="12" class="mt-n6">
               <v-alert type="error" prominent>
-                <div class="title">
-                  {{entity.amount}} $ALGOP
-                </div>
+                <div class="title">{{ entity.amount }} $ALGOP</div>
                 <small>
-                  You will pay {{entity.amount}} $ALGOP to mint this amazing job, however
-                  this price can change if the batch changes!
+                  You will pay {{ entity.amount }} $ALGOP to mint this amazing
+                  job, however this price can change if the batch changes!
                 </small>
               </v-alert>
             </v-col>
@@ -198,18 +218,11 @@
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
-          <v-btn
-            v-if="!isMinting"
-            color="grey"
-            text
-            @click="clearParameters()"
-          >
+          <v-btn v-if="!isMinting" color="grey" text @click="clearParameters()">
             Discard this amazing job...
           </v-btn>
           <small v-if="isUploadingToIPFS || isWaitingTransaction">
-            <span v-if="isUploadingToIPFS">
-              Uploading to IPFS...
-            </span>
+            <span v-if="isUploadingToIPFS"> Uploading to IPFS... </span>
             <span v-if="isWaitingTransaction">
               Waiting blockchain transaction...
             </span>
@@ -232,7 +245,6 @@
 
 <script>
 import PaitingView from "@/lib/components/ui/PaitingView";
-
 import IPFSHelper from "@/lib/helpers/IPFSHelper";
 import AlgoPainterGweiItemProxy from "@/lib/eth/AlgoPainterGweiItemProxy";
 import AlgoPainterTokenProxy from "@/lib/eth/AlgoPainterTokenProxy";
@@ -245,96 +257,98 @@ export default {
 
   data() {
     return {
+      pirsValid: [(v) => (v >= 0 && v <= 30) || "only number between 0 and 30"],
       inspirations: [
         {
-          text: 'Random',
-          value: '0',
+          text: "Random",
+          value: "0",
         },
         {
-          text: 'Calm',
-          value: '1',
+          text: "Calm",
+          value: "1",
         },
         {
-          text: 'Colorful blocks',
-          value: '2',
+          text: "Colorful blocks",
+          value: "2",
         },
         {
-          text: 'Colorful paths',
-          value: '3',
+          text: "Colorful paths",
+          value: "3",
         },
         {
-          text: 'Hot flows',
-          value: '4',
+          text: "Hot flows",
+          value: "4",
         },
         {
-          text: 'Galaxy',
-          value: '5',
+          text: "Galaxy",
+          value: "5",
         },
         {
-          text: 'Madness',
-          value: '6',
+          text: "Madness",
+          value: "6",
         },
       ],
       places: [
         {
-          text: 'None',
-          value: '0',
+          text: "None",
+          value: "0",
         },
         {
-          text: 'Wall',
-          value: '1',
+          text: "Wall",
+          value: "1",
         },
         {
-          text: 'Big Wall',
-          value: '2',
+          text: "Big Wall",
+          value: "2",
         },
         {
-          text: 'Room',
-          value: '6',
+          text: "Room",
+          value: "6",
         },
         {
-          text: 'Bedroom',
-          value: '3',
+          text: "Bedroom",
+          value: "3",
         },
         {
-          text: 'High-Tech Gallery',
-          value: '4',
+          text: "High-Tech Gallery",
+          value: "4",
         },
         {
-          text: 'Open Gallery',
-          value: '5',
+          text: "Open Gallery",
+          value: "5",
         },
         {
-          text: 'PsyVerse',
-          value: '7',
+          text: "PsyVerse",
+          value: "7",
         },
       ],
       overlays: [
         {
-          text: 'Regular',
-          value: '0',
+          text: "Regular",
+          value: "0",
         },
         {
-          text: 'Splatters and Drips',
-          value: '1',
+          text: "Splatters and Drips",
+          value: "1",
         },
         {
-          text: 'Dripping Paint',
-          value: '2',
+          text: "Dripping Paint",
+          value: "2",
         },
         {
-          text: 'Acrylic',
-          value: '3',
+          text: "Acrylic",
+          value: "3",
         },
         {
-          text: 'Freedom',
-          value: '4',
+          text: "Freedom",
+          value: "4",
         },
         {
-          text: 'Heavy Brush',
-          value: '5',
+          text: "Heavy Brush",
+          value: "5",
         },
       ],
+      message: "errro",
       ticks: Date.now(),
       isMinting: false,
       isUploadingToIPFS: false,
@@ -344,12 +358,13 @@ export default {
       dialog: false,
       entity: {
         text: "My Amazing Painting",
+        pirs: 0,
         description: "",
         inspiration: "1",
         useRandom: "false",
         probability: 5,
-        overlay: '0',
-        overlayOpacity: '10',
+        overlay: "0",
+        overlayOpacity: "10",
         wallType: "1",
       },
       parsedText: "",
@@ -385,7 +400,7 @@ export default {
     currentBlockNumber() {
       this.updateInfo();
     },
-    
+
     account() {
       this.updateInfo();
     },
@@ -393,27 +408,32 @@ export default {
 
   computed: {
     stats() {
-      return [{
-        icon: 'mdi-wallet',
-        color: 'success',
-        title: 'Batch Price ($ALGOP)',
-        value: this.minAmount
-      }, {
-        icon: 'mdi-lock-open-variant-outline',
-        color: 'green',
-        title: 'Remaining',
-        value: 1000 - this.totalSupply,
-      },{
-        icon: 'mdi-lock-outline',
-        color: 'primary',
-        title: 'Minted',
-        value: this.totalSupply
-      }, {
-        icon: 'mdi-fire',
-        color: 'yellow',
-        title: 'Tokens to Burn ($ALGOP)',
-        value: this.amountToBurn,
-      }];
+      return [
+        {
+          icon: "mdi-wallet",
+          color: "success",
+          title: "Batch Price ($ALGOP)",
+          value: this.minAmount,
+        },
+        {
+          icon: "mdi-lock-open-variant-outline",
+          color: "green",
+          title: "Remaining",
+          value: 1000 - this.totalSupply,
+        },
+        {
+          icon: "mdi-lock-outline",
+          color: "primary",
+          title: "Minted",
+          value: this.totalSupply,
+        },
+        {
+          icon: "mdi-fire",
+          color: "yellow",
+          title: "Tokens to Burn ($ALGOP)",
+          value: this.amountToBurn,
+        },
+      ];
     },
 
     isConnected() {
@@ -425,23 +445,41 @@ export default {
     },
 
     gweiContractAddress() {
-      return this.$store.getters['user/gweiContractAddress'];
+      return this.$store.getters["user/gweiContractAddress"];
     },
 
     contractAddress() {
-      return this.$store.getters['user/contractAddress'];
+      return this.$store.getters["user/contractAddress"];
     },
 
     currentBlockNumber() {
-      return this.$store.getters['user/currentBlockNumber'];
+      return this.$store.getters["user/currentBlockNumber"];
     },
 
     src() {
-      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?width=300&height=300&ticks=${this.ticks}&text=${encodeURIComponent(this.parsedText)}&inspiration=${this.parsedInspiration}&useRandom=${this.parsedUseRandom}&probability=${this.parsedProbability}&wallType=${this.parsedWallType}&overlay=${this.parsedOverlay}&overlayOpacity=${this.parsedOverlayOpacity}`;
+      return `${
+        process.env.VUE_APP_GWEI_ENDPOINT
+      }/?width=300&height=300&ticks=${this.ticks}&text=${encodeURIComponent(
+        this.parsedText
+      )}&inspiration=${this.parsedInspiration}&useRandom=${
+        this.parsedUseRandom
+      }&probability=${this.parsedProbability}&wallType=${
+        this.parsedWallType
+      }&overlay=${this.parsedOverlay}&overlayOpacity=${
+        this.parsedOverlayOpacity
+      }`;
     },
 
     srcIPFS() {
-      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?text=${encodeURIComponent(this.parsedText)}&inspiration=${this.parsedInspiration}&useRandom=${this.parsedUseRandom}&probability=${this.parsedProbability}&wallType=${this.parsedWallType}&overlay=${this.parsedOverlay}&overlayOpacity=${this.parsedOverlayOpacity}`;
+      return `${process.env.VUE_APP_GWEI_ENDPOINT}/?text=${encodeURIComponent(
+        this.parsedText
+      )}&inspiration=${this.parsedInspiration}&useRandom=${
+        this.parsedUseRandom
+      }&probability=${this.parsedProbability}&wallType=${
+        this.parsedWallType
+      }&overlay=${this.parsedOverlay}&overlayOpacity=${
+        this.parsedOverlayOpacity
+      }`;
     },
   },
 
@@ -468,14 +506,14 @@ export default {
           text: this.entity.text,
           inspiration: this.entity.inspiration,
           useRandom: this.entity.useRandom,
-          probability: parseFloat((this.entity.probability/10).toFixed(1)),
+          probability: parseFloat((this.entity.probability / 10).toFixed(1)),
           place: this.entity.wallType,
           description: this.entity.description,
           amount: this.entity.amount,
           overlay: this.entity.overlay,
           overlayOpacity: this.entity.overlayOpacity,
           mintedBy: this.account,
-        }
+        };
 
         this.isUploadingToIPFS = true;
 
@@ -488,23 +526,28 @@ export default {
 
         const newMint = {
           text: this.entity.text,
+          test: this.name.testo,
           inspiration: this.entity.inspiration,
-          useRandom: this.entity.useRandom === 'true',
+          useRandom: this.entity.useRandom === "true",
           probability: this.entity.probability,
           place: this.entity.wallType,
           tokenURI,
           amount,
         };
 
-        console.log({newMint});
+        console.log({ newMint });
         this.creating = true;
 
-        this.transactionHash = await proxy.mint(newMint, this.account, (receipt) => {
-          this.isWaitingTransaction = false;
-          this.receipt = receipt;
-          this.isMinting = false;
-          this.isMinted = true;
-        });
+        this.transactionHash = await proxy.mint(
+          newMint,
+          this.account,
+          (receipt) => {
+            this.isWaitingTransaction = false;
+            this.receipt = receipt;
+            this.isMinting = false;
+            this.isMinted = true;
+          }
+        );
         this.isWaitingTransaction = true;
       } catch (error) {
         console.log(error);
@@ -513,19 +556,20 @@ export default {
         this.isMinted = false;
 
         switch (error.code) {
-          case 'INVALID_MINIMUM_AMOUNT':
+          case "INVALID_MINIMUM_AMOUNT":
             this.errorMsg =
-              'Your payment mast be greater than or equal to the minimum amount';
+              "Your payment mast be greater than or equal to the minimum amount";
             break;
-          case 'PAINTING_ALREADY_REGISTERED':
-            this.errorMsg = 'This painting was already generated for another costumer';
+          case "PAINTING_ALREADY_REGISTERED":
+            this.errorMsg =
+              "This painting was already generated for another costumer";
             break;
           case 4001:
             this.errorMsg =
-              'MetaMask Tx Signature: User denied transaction signature.';
+              "MetaMask Tx Signature: User denied transaction signature.";
             break;
           default:
-            this.errorMsg = 'Unexpected error';
+            this.errorMsg = "Unexpected error";
         }
       } finally {
         this.clearParameters();
@@ -552,8 +596,12 @@ export default {
       this.parsedInspiration = this.entity.inspiration;
       this.parsedUseRandom = this.entity.useRandom;
       this.parsedOverlay = parseInt(this.entity.overlay);
-      this.parsedOverlayOpacity = parseFloat((this.entity.overlayOpacity/10).toFixed(1));
-      this.parsedProbability = parseFloat((this.entity.probability/10).toFixed(1));
+      this.parsedOverlayOpacity = parseFloat(
+        (this.entity.overlayOpacity / 10).toFixed(1)
+      );
+      this.parsedProbability = parseFloat(
+        (this.entity.probability / 10).toFixed(1)
+      );
       this.parsedWallType = this.entity.wallType;
     },
 
@@ -562,13 +610,13 @@ export default {
       this.creating = false;
       this.dialog = false;
       this.showUpdate = false;
-      this.parsedText = '';
-      this.parsedInspiration = '-1';
-      this.parsedUseRandom = 'false';
+      this.parsedText = "";
+      this.parsedInspiration = "-1";
+      this.parsedUseRandom = "false";
       this.parsedProbability = 0;
       this.parsedOverlay = 0;
       this.parsedProbability = 1;
-      this.parsedWallType = '1';
+      this.parsedWallType = "1";
     },
 
     async updateInfo() {
@@ -577,7 +625,10 @@ export default {
       }
 
       const algop = new AlgoPainterTokenProxy();
-      this.hasAllowance = await algop.hasAllowance(this.account, this.gweiContractAddress);
+      this.hasAllowance = await algop.hasAllowance(
+        this.account,
+        this.gweiContractAddress
+      );
 
       const proxy = new AlgoPainterGweiItemProxy();
       this.minAmount = await proxy.getCurrentAmount();
@@ -591,11 +642,11 @@ export default {
 
       try {
         this.isApproving = true;
-        await algop.approve(this.account, this.gweiContractAddress); 
+        await algop.approve(this.account, this.gweiContractAddress);
       } finally {
         this.isApproving = false;
       }
-    }
+    },
   },
 };
 </script>

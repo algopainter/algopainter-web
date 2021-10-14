@@ -64,6 +64,7 @@
                     autocomplete="off"
                   ></v-text-field>
                 </v-col>
+
                 <v-col cols="12" class="mt-n8">
                   <v-radio-group v-model="entity.useRandom" row>
                     <template v-slot:label>
@@ -109,6 +110,16 @@
                   ></v-select>
                 </v-col>
                 <v-col cols="12" class="mt-n6">
+                  <v-text-field
+                    v-model="entity.pirs"
+                    label="Pirs"
+                    required
+                    autocomplete="off"
+                    :rules="pirsValid"
+                    type="number"
+                  ></v-text-field>
+                </v-col>
+                <!-- <v-col cols="12" class="mt-n6">
                   PIRS: 5%
                   <br />
                   <small
@@ -116,10 +127,15 @@
                       >Learn more</a
                     ></small
                   >
-                </v-col>
+                </v-col> -->
                 <v-col cols="12" class="mt-n6">
                   <v-btn
-                    :disabled="isMinting || entity.text === ''"
+                    :disabled="
+                      isMinting ||
+                      entity.text === '' ||
+                      entity.pirs < 0 ||
+                      entity.pirs > 30
+                    "
                     color="primary"
                     block
                     @click="updateImage"
@@ -134,7 +150,7 @@
               <v-row>
                 <v-col cols="12">
                   <v-alert outlined type="info" prominent>
-                    You need to approve Gwei smart contract to spend ALGOP.
+                    You need to approve Gwei smart contract to spend ALGOP
                   </v-alert>
                 </v-col>
                 <v-col cols="12" class="mt-n6">
@@ -229,7 +245,6 @@
 
 <script>
 import PaitingView from "@/lib/components/ui/PaitingView";
-
 import IPFSHelper from "@/lib/helpers/IPFSHelper";
 import AlgoPainterGweiItemProxy from "@/lib/eth/AlgoPainterGweiItemProxy";
 import AlgoPainterTokenProxy from "@/lib/eth/AlgoPainterTokenProxy";
@@ -242,6 +257,7 @@ export default {
 
   data() {
     return {
+      pirsValid: [(v) => (v >= 0 && v <= 30) || "only number between 0 and 30"],
       inspirations: [
         {
           text: "Random",
@@ -332,6 +348,7 @@ export default {
           value: "5",
         },
       ],
+      message: "errro",
       ticks: Date.now(),
       isMinting: false,
       isUploadingToIPFS: false,
@@ -341,6 +358,7 @@ export default {
       dialog: false,
       entity: {
         text: "My Amazing Painting",
+        pirs: 0,
         description: "",
         inspiration: "1",
         useRandom: "false",
@@ -508,6 +526,7 @@ export default {
 
         const newMint = {
           text: this.entity.text,
+          test: this.name.testo,
           inspiration: this.entity.inspiration,
           useRandom: this.entity.useRandom === "true",
           probability: this.entity.probability,
@@ -547,7 +566,7 @@ export default {
             break;
           case 4001:
             this.errorMsg =
-              "MetaMask Tx Signature: User denied transaction signature. ";
+              "MetaMask Tx Signature: User denied transaction signature.";
             break;
           default:
             this.errorMsg = "Unexpected error";

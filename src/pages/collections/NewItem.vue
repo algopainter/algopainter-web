@@ -2,17 +2,14 @@
   <div>
     <v-container>
       <v-row dense>
-        <v-col
-          v-for="(stat, i) in stats"
-          :key="i"
-          cols="12"
-          md="6"
-          lg="4"
-        >
+        <v-col v-for="(stat, i) in stats" :key="i" cols="12" md="6" lg="4">
           <v-card class="pa-3 text-center">
-            <div @click="showPricing(stat)" :class="{clickable: stat.showPricing}">
+            <div
+              @click="showPricing(stat)"
+              :class="{ clickable: stat.showPricing }"
+            >
               <div class="overline mb-2">
-                <v-icon :color="stat.color">{{stat.icon}}</v-icon>
+                <v-icon :color="stat.color">{{ stat.icon }}</v-icon>
                 {{ stat.title }}
               </div>
               <div class="text-h4">{{ stat.value }}</div>
@@ -24,7 +21,9 @@
     <v-container>
       <v-card color="grey lighten-4" flat>
         <v-toolbar class="elevation-0">
-          <v-toolbar-title>New Painting from {{ collection.name }}</v-toolbar-title>
+          <v-toolbar-title
+            >New Painting from {{ collection.name }}</v-toolbar-title
+          >
           <v-spacer></v-spacer>
           <v-btn v-if="isMinted" color="grey" class="mr-4" outlined to="/">
             <v-icon left>mdi-view-module</v-icon>
@@ -33,7 +32,9 @@
         </v-toolbar>
       </v-card>
       <v-divider class="my-2"></v-divider>
-      <v-alert type="error" v-if="!account">You are not connected! Please check in your wallet.</v-alert>
+      <v-alert type="error" v-if="!account"
+        >You are not connected! Please check in your wallet.</v-alert
+      >
       <v-container v-if="collection.id">
         <v-row dense>
           <v-col lg="6" sm="12">
@@ -41,7 +42,12 @@
               <v-card-title>Parameters</v-card-title>
               <v-card-text>
                 <v-row class="mt-n1" style="max-height: 630px; overflow: auto">
-                  <v-col cols="12" :class="{'mt-n8': index > 0}" v-for="(parameter, index) in collection.parameters" :key="parameter.name">
+                  <v-col
+                    cols="12"
+                    :class="{ 'mt-n8': index > 0 }"
+                    v-for="(parameter, index) in collection.parameters"
+                    :key="parameter.name"
+                  >
                     <div v-if="parameter.widget === 'select'">
                       <v-select
                         v-model="paintingInfo[parameter.name]"
@@ -52,7 +58,7 @@
 
                     <div class="mt-n1" v-if="parameter.widget === 'slider'">
                       <v-subheader class="pl-0">
-                        {{parameter.displayName}}
+                        {{ parameter.displayName }}
                       </v-subheader>
                       <v-slider
                         v-model="paintingInfo[parameter.name]"
@@ -72,7 +78,12 @@
                 </v-row>
                 <v-row>
                   <v-col cols="12" class="">
-                    <v-btn color="primary" :disabled="isLoading" block @click="generatePreview">
+                    <v-btn
+                      color="primary"
+                      :disabled="isLoading"
+                      block
+                      @click="generatePreview"
+                    >
                       Generate Preview
                     </v-btn>
                   </v-col>
@@ -86,7 +97,12 @@
               <v-card-text>
                 <v-row>
                   <v-col cols="12" class="d-flex justify-center">
-                    <img :class="{blur: isLoading}" width="400" height="400" v-bind:src="encodedImage" />
+                    <img
+                      :class="{ blur: isLoading }"
+                      width="400"
+                      height="400"
+                      v-bind:src="encodedImage"
+                    />
                   </v-col>
                 </v-row>
                 <v-row class="mt-n3">
@@ -110,6 +126,16 @@
                       autocomplete="off"
                     ></v-text-field>
                   </v-col>
+                  <v-col cols="12" class="mt-n6">
+                    <v-text-field
+                      v-model="pirs"
+                      label="Pirs"
+                      required
+                      autocomplete="off"
+                      :rules="pirsValid"
+                      type="number"
+                    ></v-text-field>
+                  </v-col>
                   <v-col cols="12" class="mt-n4">
                     <v-checkbox
                       class="mt-n2"
@@ -121,14 +147,9 @@
                 </v-row>
                 <v-row v-if="isError">
                   <v-col cols="12">
-                    <v-alert
-                      outlined 
-                      type="error" 
-                      class="mt-n4" 
-                      prominent 
-                    >
-                    {{errorMessage}}
-                  </v-alert>
+                    <v-alert outlined type="error" class="mt-n4" prominent>
+                      {{ errorMessage }}
+                    </v-alert>
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -136,7 +157,14 @@
                 <v-spacer />
                 <v-btn
                   color="primary"
-                  :disabled="!loaded || !name || !description || !isFeeWarningOk"
+                  :disabled="
+                    !loaded ||
+                    !name ||
+                    !description ||
+                    !isFeeWarningOk ||
+                    pirs < 0 ||
+                    pirs > 30
+                  "
                   text
                   :disable="!account"
                   :loading="isMinting"
@@ -145,10 +173,7 @@
                   Mint this artwork
                 </v-btn>
               </v-card-actions>
-              <v-overlay
-                :absolute="true"
-                :value="isLoading"
-              >
+              <v-overlay :absolute="true" :value="isLoading">
                 <v-progress-circular
                   indeterminate
                   color="amber"
@@ -166,11 +191,11 @@
       width="500"
     >
       <v-card>
-        <v-card-title>
-          Minting your Expression ({{name}})
-        </v-card-title>
-        <v-card-text class="d-flex flex-column justify-space-between align-center">
-          {{description}}
+        <v-card-title> Minting your Expression ({{ name }}) </v-card-title>
+        <v-card-text
+          class="d-flex flex-column justify-space-between align-center"
+        >
+          {{ description }}
 
           <v-progress-circular
             :rotate="360"
@@ -180,24 +205,40 @@
             color="primary"
             class="mt-1"
           >
-            <span v-if="step <= 4">{{step + 1}} of 5</span>
+            <span v-if="step <= 4">{{ step + 1 }} of 5</span>
             <span v-else>Done</span>
           </v-progress-circular>
-          <v-alert v-if="step !== 3"
-              icon="mdi-information" 
-              outlined 
-              type="primary" 
-              class="mt-2" 
-              prominent 
-              style="width: 100%"
+          <v-alert
+            v-if="step !== 3"
+            icon="mdi-information"
+            outlined
+            type="primary"
+            class="mt-2"
+            prominent
+            style="width: 100%"
+          >
+            <span v-if="step === 0"
+              >Generating the <strong>preview</strong> file...</span
             >
-            <span v-if="step === 0">Generating the <strong>preview</strong> file...</span>
-            <span v-if="step === 1">Generating the <strong>raw</strong> file (it may take a while)...</span>
-            <span v-if="step === 2">Generating the <strong>descriptor</strong> file...</span>
+            <span v-if="step === 1"
+              >Generating the <strong>raw</strong> file (it may take a
+              while)...</span
+            >
+            <span v-if="step === 2"
+              >Generating the <strong>descriptor</strong> file...</span
+            >
             <span v-if="step === 4 || step === 5">
-              <span v-if="isWaitingWalletApproval">Waiting for the wallet approval...</span>
-              <span v-if="isWaitingBlockchainConfirmation">It is done, now wait for the first blockchain confirmation...</span>
-              <span v-if="isMinted">Your amazing artwork was minted successfully. Check out your gallery!</span>
+              <span v-if="isWaitingWalletApproval"
+                >Waiting for the wallet approval...</span
+              >
+              <span v-if="isWaitingBlockchainConfirmation"
+                >It is done, now wait for the first blockchain
+                confirmation...</span
+              >
+              <span v-if="isMinted"
+                >Your amazing artwork was minted successfully. Check out your
+                gallery!</span
+              >
             </span>
             <v-progress-linear
               :active="!isMinted"
@@ -209,8 +250,12 @@
           </v-alert>
           <div v-if="step === 3">
             <div class="mt-2">
-              <a :href="`https://ipfs.io/ipfs/${this.rawIPFSHash}`" target="_blank" class="mt-2">
-                Click here to see the raw image (high resolution) file
+              <a
+                :href="`https://ipfs.io/ipfs/${this.rawIPFSHash}`"
+                target="_blank"
+                class="mt-2"
+              >
+                Click here to see the raw image (high resolution) file.
               </a>
             </div>
             <v-checkbox
@@ -227,7 +272,14 @@
               v-model="isFeeWarningOk"
               :label="displayFeeMessage"
             ></v-checkbox>
-            <v-btn color="primary" :disabled="!isRawFileWarningOk || !isBackupWarningOk || !isFeeWarningOk" block @click="mintNFT">
+            <v-btn
+              color="primary"
+              :disabled="
+                !isRawFileWarningOk || !isBackupWarningOk || !isFeeWarningOk
+              "
+              block
+              @click="mintNFT"
+            >
               Finish the process
             </v-btn>
           </div>
@@ -235,37 +287,29 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog 
-      v-model="isPricingOpen"
-      width="500"
-    >
+    <v-dialog v-model="isPricingOpen" width="500">
       <v-card>
-        <v-card-title>
-          Pricing table for {{collection.name}}
-        </v-card-title>
+        <v-card-title> Pricing table for {{ collection.name }} </v-card-title>
         <v-card-text>
           <v-simple-table>
             <template v-slot:default>
               <thead>
                 <tr>
-                  <th class="text-left">
-                    Range
-                  </th>
-                  <th class="text-left">
-                    Price
-                  </th>
+                  <th class="text-left">Range</th>
+                  <th class="text-left">Price</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(range, index) in collection.pricing.ranges" :key="index">
-                  <td>
-                    {{range.start}} - {{range.finish}}
-                  </td>
+                <tr
+                  v-for="(range, index) in collection.pricing.ranges"
+                  :key="index"
+                >
+                  <td>{{ range.start }} - {{ range.finish }}</td>
                   <td>
                     <div>
-                      {{range.price}}
-                      {{collection.baseToken}}
-                      <small>+ {{formattedServiceFee}}% of service fee</small>
+                      {{ range.price }}
+                      {{ collection.baseToken }}
+                      <small>+ {{ formattedServiceFee }}% of service fee</small>
                     </div>
                   </td>
                 </tr>
@@ -279,16 +323,16 @@
 </template>
 
 <script>
-import { paint } from '@/workers/painting.worker';
-import CollectionController from '@/lib/controllers/CollectionController';
+import { paint } from "@/workers/painting.worker";
+import CollectionController from "@/lib/controllers/CollectionController";
 import PinningServiceHelper from "@/lib/helpers/PinningServiceHelper";
 
 export default {
-  components: {
-  },
+  components: {},
 
   data() {
     return {
+      pirsValid: [(v) => (v >= 0 && v <= 30) || "only number between 0 and 30"],
       collection: {
         baseToken: "",
         artist: {},
@@ -322,6 +366,7 @@ export default {
 
       name: "",
       description: "",
+      pirs: 0,
       isFeeWarningOk: false,
 
       isPricingOpen: false,
@@ -336,7 +381,7 @@ export default {
     currentBlockNumber() {
       this.loadData();
     },
-    
+
     account() {
       this.loadData();
     },
@@ -344,23 +389,27 @@ export default {
 
   computed: {
     stats() {
-      return [{
-        icon: 'mdi-wallet',
-        color: 'success',
-        title: `Batch Price`,
-        value: this.displayCurrentAmount,
-        showPricing: true,
-      }, {
-        icon: 'mdi-lock-open-variant-outline',
-        color: 'green',
-        title: 'Remaining',
-        value: this.availableSupply,
-      },{
-        icon: 'mdi-lock-outline',
-        color: 'primary',
-        title: 'Minted',
-        value: this.totalSupply
-      }];
+      return [
+        {
+          icon: "mdi-wallet",
+          color: "success",
+          title: `Batch Price`,
+          value: this.displayCurrentAmount,
+          showPricing: true,
+        },
+        {
+          icon: "mdi-lock-open-variant-outline",
+          color: "green",
+          title: "Remaining",
+          value: this.availableSupply,
+        },
+        {
+          icon: "mdi-lock-outline",
+          color: "primary",
+          title: "Minted",
+          value: this.totalSupply,
+        },
+      ];
     },
 
     isConnected() {
@@ -376,7 +425,7 @@ export default {
     },
 
     currentBlockNumber() {
-      return this.$store.getters['user/currentBlockNumber'];
+      return this.$store.getters["user/currentBlockNumber"];
     },
 
     previewUrl() {
@@ -398,12 +447,16 @@ export default {
     intParameters() {
       const params = [];
 
-      for(const parameter of this.collection.parameters) {
-        switch(parameter.type.toLowerCase()) {
+      for (const parameter of this.collection.parameters) {
+        switch (parameter.type.toLowerCase()) {
           case "number":
           case "string":
             if (parameter.items) {
-              const selectedItem = parameter.items.find(item => item.value.toString() === this.paintingInfo[parameter.name].toString());
+              const selectedItem = parameter.items.find(
+                (item) =>
+                  item.value.toString() ===
+                  this.paintingInfo[parameter.name].toString()
+              );
               if (selectedItem.intValue || selectedItem.intValue === 0) {
                 params.push(selectedItem.intValue);
               } else {
@@ -413,20 +466,20 @@ export default {
               params.push(this.paintingInfo[parameter.name]);
             }
             break;
-          case "bool": 
+          case "bool":
             if (this.paintingInfo[parameter.name]) {
               params.push(1);
             } else {
               params.push(0);
             }
-            break
+            break;
           default:
             params.push(parseInt(this.paintingInfo[parameter.name]));
         }
       }
 
       return params;
-    }
+    },
   },
 
   mounted() {
@@ -437,13 +490,13 @@ export default {
     parseUrl(originalUrl) {
       let url = new String(originalUrl);
 
-      for(const parameter of this.collection.parameters) {
-        const key = '${' + parameter.name + '}';
+      for (const parameter of this.collection.parameters) {
+        const key = "${" + parameter.name + "}";
         let value = this.paintingInfo[parameter.name];
-        
+
         if (value === null || value === undefined) {
           value = parameter.defaultValue;
-        } 
+        }
 
         url = url.replace(key, value);
       }
@@ -472,13 +525,32 @@ export default {
 
       const collectionController = new CollectionController();
 
-      this.collection = await collectionController.getCollectionById(parseInt(this.$route.params.id));
-      this.availableSupply = await collectionController.getAvailableSupply(this.networkInfo, this.collection.id);
-      this.totalSupply = await collectionController.getTotalSupply(this.networkInfo, this.collection.id);
-      this.currentAmount = await collectionController.getCurrentAmount(this.networkInfo, this.collection.id);
-      this.formattedCurrentAmount = await collectionController.getFormattedCurrentAmount(this.networkInfo, this.collection.id);
-      this.formattedServiceFee = await collectionController.getFormattedServiceFee(this.networkInfo, this.collection.id);
-      
+      this.collection = await collectionController.getCollectionById(
+        parseInt(this.$route.params.id)
+      );
+      this.availableSupply = await collectionController.getAvailableSupply(
+        this.networkInfo,
+        this.collection.id
+      );
+      this.totalSupply = await collectionController.getTotalSupply(
+        this.networkInfo,
+        this.collection.id
+      );
+      this.currentAmount = await collectionController.getCurrentAmount(
+        this.networkInfo,
+        this.collection.id
+      );
+      this.formattedCurrentAmount =
+        await collectionController.getFormattedCurrentAmount(
+          this.networkInfo,
+          this.collection.id
+        );
+      this.formattedServiceFee =
+        await collectionController.getFormattedServiceFee(
+          this.networkInfo,
+          this.collection.id
+        );
+
       if (!this.isConfigured) {
         this.setFormInitialState();
       }
@@ -501,7 +573,10 @@ export default {
     async startMintingProcess() {
       try {
         const collectionController = new CollectionController();
-        const mint = await collectionController.getMintMethod(this.networkInfo, this.collection.id);
+        const mint = await collectionController.getMintMethod(
+          this.networkInfo,
+          this.collection.id
+        );
 
         this.setModalInitialState();
 
@@ -517,17 +592,19 @@ export default {
 
           this.isError = true;
 
-          if (e.message && e.message.indexOf('ALREADY_REGISTERED') >= 0) {
-            this.errorMessage = "Another user has minted an artwork using this configuration, please select other set of parameters.";
+          if (e.message && e.message.indexOf("ALREADY_REGISTERED") >= 0) {
+            this.errorMessage =
+              "Another user has minted an artwork using this configuration, please select other set of parameters.";
             return;
           }
 
-          if (e.message && e.message.indexOf('PRICE_HAS_CHANGED') >= 0) {
-            this.errorMessage = "The current price has changed, please update the page!";
+          if (e.message && e.message.indexOf("PRICE_HAS_CHANGED") >= 0) {
+            this.errorMessage =
+              "The current price has changed, please update the page!";
             return;
           }
 
-          if (e.message && e.message.indexOf('INVALID_AMOUNT') >= 0) {
+          if (e.message && e.message.indexOf("INVALID_AMOUNT") >= 0) {
             this.errorMessage = "Invalid amount!";
             return;
           }
@@ -537,20 +614,29 @@ export default {
         }
 
         this.dialog = true;
-        
+
         this.step = 0;
-        const previewPiningResult = await PinningServiceHelper.pinFile(`${this.collection.name} - Preview`, this.collection.id, this.previewUrl);
+        const previewPiningResult = await PinningServiceHelper.pinFile(
+          `${this.collection.name} - Preview`,
+          this.collection.id,
+          this.previewUrl
+        );
         this.previewIPFSHash = previewPiningResult.ipfsHash;
 
         if (!this.previewIPFSHash) {
           this.setModalInitialState();
           this.isError = true;
-          this.errorMessage = "An error has occured while generating preview file!";
+          this.errorMessage =
+            "An error has occured while generating preview file!";
           return;
         }
-        
+
         this.step = 1;
-        const rawPiningResult = await PinningServiceHelper.pinFile(`${this.collection.name} - Raw`, this.collection.id, this.rawUrl);
+        const rawPiningResult = await PinningServiceHelper.pinFile(
+          `${this.collection.name} - Raw`,
+          this.collection.id,
+          this.rawUrl
+        );
         this.rawIPFSHash = rawPiningResult.ipfsHash;
 
         if (!this.rawIPFSHash) {
@@ -559,7 +645,7 @@ export default {
           this.errorMessage = "An error has occured while generating raw file!";
           return;
         }
-        
+
         this.step = 2;
         const payload = {
           name: this.name,
@@ -573,13 +659,16 @@ export default {
           parameters: this.paintingInfo,
           mintedBy: this.account,
         };
-        const descriptorPinningResult = await PinningServiceHelper.pinJSON(payload);
+        const descriptorPinningResult = await PinningServiceHelper.pinJSON(
+          payload
+        );
         this.descriptorIPFSHash = descriptorPinningResult.ipfsHash;
 
         if (!this.descriptorIPFSHash) {
           this.setModalInitialState();
           this.isError = true;
-          this.errorMessage = "An error has occured while generating descriptor file!";
+          this.errorMessage =
+            "An error has occured while generating descriptor file!";
           return;
         }
 
@@ -594,12 +683,19 @@ export default {
       try {
         const collectionController = new CollectionController();
         this.step = 4;
-        const mint = await collectionController.getMintMethod(this.networkInfo, this.collection.id);
+        const mint = await collectionController.getMintMethod(
+          this.networkInfo,
+          this.collection.id
+        );
 
         this.isWaitingWalletApproval = true;
-        const result = mint(this.intParameters, this.currentAmount, this.descriptorIPFSHash).send({
+        const result = mint(
+          this.intParameters,
+          this.currentAmount,
+          this.descriptorIPFSHash
+        ).send({
           value: this.currentAmount,
-          from: this.account
+          from: this.account,
         });
 
         result.on("error", (error) => {
@@ -607,7 +703,7 @@ export default {
           console.log(error);
           this.isError = true;
           this.errorMessage = `An unexpected error has occurred, please try again! \n\n ${error}`;
-        })
+        });
 
         result.on("transactionHash", () => {
           this.step = 5;
@@ -640,7 +736,11 @@ export default {
     async generatePreview() {
       this.isError = false;
       this.isLoading = true;
-      this.encodedImage = await paint(this.collection, this.paintingInfo, false);
+      this.encodedImage = await paint(
+        this.collection,
+        this.paintingInfo,
+        false
+      );
       this.isLoading = false;
       this.loaded = true;
     },
@@ -649,22 +749,22 @@ export default {
       if (stat.showPricing) {
         this.isPricingOpen = true;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
-  .blur {
-    -webkit-filter: blur(5px); /* Safari 6.0 - 9.0 */
-    filter: blur(5px);
-  }
+.blur {
+  -webkit-filter: blur(5px); /* Safari 6.0 - 9.0 */
+  filter: blur(5px);
+}
 
-  .v-alert__content {
-    overflow: auto;
-  }
+.v-alert__content {
+  overflow: auto;
+}
 
-  .clickable {
-    cursor: pointer;
-  }
+.clickable {
+  cursor: pointer;
+}
 </style>

@@ -526,7 +526,7 @@ export default {
 
         const newMint = {
           text: this.entity.text,
-          test: this.name.testo,
+          pirs: this.entity.pirs,
           inspiration: this.entity.inspiration,
           useRandom: this.entity.useRandom === "true",
           probability: this.entity.probability,
@@ -535,7 +535,6 @@ export default {
           amount,
         };
 
-        console.log({ newMint });
         this.creating = true;
 
         this.transactionHash = await proxy.mint(
@@ -548,9 +547,18 @@ export default {
             this.isMinted = true;
           }
         );
+
         this.isWaitingTransaction = true;
+
+        const bidbackPirsproxy = new AlgoPainterBidbackPirsProxy();
+
+        await bidbackPirsproxy.setInvestorPirsPercentage(
+          this.gweiContractAddress,
+          this.entity.pirs,
+          this.account,
+        )
+
       } catch (error) {
-        console.log(error);
         this.isMinting = false;
         this.isWaitingTransaction = false;
         this.isMinted = false;

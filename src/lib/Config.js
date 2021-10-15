@@ -24,6 +24,19 @@ export function getGweiSmartContractAddress(networkId) {
   }
 }
 
+export function getBidbackPirsContractAddress(networkId) {
+  switch (networkId.toString()) {
+    case "56":
+      return process.env.VUE_APP_BIDBACK_PIRS_CONTRACT_56;
+    case "97":
+      return process.env.VUE_APP_BIDBACK_PIRS_CONTRACT_97;
+    case "5777":
+      return process.env.VUE_APP_BIDBACK_PIRS_CONTRACT_5777;
+    default:
+      return process.env.VUE_APP_BIDBACK_PIRS_CONTRACT;
+  }
+}
+
 export function getWalletConnectConfig(networkId) {
   return {
     rpc: {

@@ -56,6 +56,12 @@ export default {
         "setGweiContractAddress",
         Config.getGweiSmartContractAddress(networkInfo.id)
       );
+      /*
+      commit(
+        "setbidbackPirsContractAddress",
+        Config.getBidbackPirsContractAddress(networkInfo.id)
+      );
+      */
       commit(
         "setContractAddress",
         Config.getSmartContractAddress(networkInfo.id)

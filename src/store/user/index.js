@@ -11,7 +11,8 @@ const state = {
   networkInfo: {},
   gweiContractAddress: "",
   contractAddress: "",
-  currentBlockNumber: 0
+  currentBlockNumber: 0,
+  bidbackPirsAddress: ""
 };
 
 export default {

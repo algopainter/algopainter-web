@@ -17,6 +17,10 @@ export default {
     state.gweiContractAddress = gweiContractAddress;
   },
 
+  setbidbackPirsContractAddress: (state, bidbackPirsContractAddress) => {
+    state.bidbackPirsAddress = bidbackPirsContractAddress;
+  },
+
   setContractAddress: (state, contractAddress) => {
     state.contractAddress = contractAddress;
   },

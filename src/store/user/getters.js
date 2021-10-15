@@ -5,5 +5,6 @@ export default {
   networkInfo: state => state.networkInfo,
   gweiContractAddress: state => state.gweiContractAddress,
   contractAddress: state => state.contractAddress,
-  currentBlockNumber: state => state.currentBlockNumber
+  currentBlockNumber: state => state.currentBlockNumber,
+  bidbackPirsContractAddress: state => state.bidbackPirsAddress,
 };
